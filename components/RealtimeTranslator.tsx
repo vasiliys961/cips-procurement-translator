@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import type { Locale } from '@/lib/i18n/config'
-import { translatorUi, type TranslatorUi } from '@/lib/i18n/translator-ui'
+import { partyLabels, translatorUi, type TranslatorUi } from '@/lib/i18n/translator-ui'
 import { REALTIME_TRANSLATION_CREDITS_PER_MINUTE } from '@/lib/cost-calculator'
 import { recordUsageCost } from '@/lib/simple-logger'
 import LanguageDetectPanel from '@/components/LanguageDetectPanel'
@@ -78,6 +78,30 @@ function formatCredits(value: number): string {
   return (Math.round(value * 10) / 10).toFixed(1)
 }
 
+function SpeakerCard({
+  title,
+  hint,
+  speaking,
+  children,
+}: {
+  title: string
+  hint: string
+  speaking: boolean
+  children: ReactNode
+}) {
+  return (
+    <div
+      className={`rounded-3xl border-4 p-4 shadow-sm sm:p-5 ${
+        speaking ? 'border-primary-600 bg-primary-50 shadow-md' : 'border-slate-200 bg-white'
+      }`}
+    >
+      <p className="text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">{title}</p>
+      <p className={`mt-1 text-sm font-semibold ${speaking ? 'text-primary-800' : 'text-slate-500'}`}>{hint}</p>
+      {children}
+    </div>
+  )
+}
+
 function phaseClass(phase: TranslatePhase): string {
   switch (phase) {
     case 'listening':
@@ -117,6 +141,7 @@ export default function RealtimeTranslatorPanel({ locale }: { locale: Locale }) 
   const [sessionCredits, setSessionCredits] = useState(0)
   const [speaker, setSpeaker] = useState<'buyer' | 'supplier' | null>(null)
   const [handingOver, setHandingOver] = useState(false)
+  const [canContinue, setCanContinue] = useState(false)
   const speakerRef = useRef<'buyer' | 'supplier' | null>(null)
   const turns = useRef(new TurnGuard())
   const accruedMs = useRef(0)
@@ -254,12 +279,14 @@ export default function RealtimeTranslatorPanel({ locale }: { locale: Locale }) 
     setFidelity(null)
     setSourceTranscript('')
     setTranslatedTranscript('')
+    setCanContinue(false)
   }
 
   const begin = async (source: string, target: string, keepWarning = false) => {
     setError('')
     setSourceTranscript('')
     setTranslatedTranscript('')
+    setCanContinue(false)
     if (!keepWarning) setFidelity(null)
     setVoicePlaying(false)
     setVoiceBlocked(false)
@@ -269,10 +296,12 @@ export default function RealtimeTranslatorPanel({ locale }: { locale: Locale }) 
         sourceLanguage: source,
         targetLanguage: target,
         onPhase: setPhase,
-        onSourceTranscript: setSourceTranscript,
+        onSourceTranscript: (text) => {
+          setSourceTranscript(text)
+          if (text) setCanContinue(false)
+        },
         onTranslatedTranscript: setTranslatedTranscript,
         onUtteranceEnd: () => {
-          if (cueOnRef.current) playTranslateCue('end')
           setColumnFlash('end')
         },
         onFidelity: (report) => {
@@ -366,9 +395,22 @@ export default function RealtimeTranslatorPanel({ locale }: { locale: Locale }) 
     }
   }
 
-  const swap = () => {
-    if (active) return
+  const exchangeSpeakers = () => {
+    if (handingOver) return
+    const live = phase === 'listening' || phase === 'translating'
+    if (live) {
+      const supplierSpeaking = speakerRef.current === 'supplier'
+      if (!supplierSpeaking && !buyerCanSpeak) return
+      unlockTranslateCue()
+      if (cueOnRef.current) playTranslateCue('swap')
+      setCanContinue(false)
+      void passTurn()
+      return
+    }
+    if (phase === 'connecting') return
     if (!buyerCanSpeak) return
+    unlockTranslateCue()
+    if (cueOnRef.current) playTranslateCue('swap')
     languagesRef.current = { buyer: supplierLanguage, supplier: buyerLanguage }
     setBuyerLanguage(supplierLanguage)
     setSupplierLanguage(buyerLanguage)
@@ -386,8 +428,12 @@ export default function RealtimeTranslatorPanel({ locale }: { locale: Locale }) 
   useEffect(() => {
     const cue = translationCue(phaseRef.current, phase)
     phaseRef.current = phase
+    if (phase === 'translating') setCanContinue(false)
     if (!cue) return
-    if (cueOnRef.current) playTranslateCue(cue)
+    if (cue === 'end') {
+      if (cueOnRef.current) playTranslateCue('end')
+      setCanContinue(true)
+    }
     setColumnFlash(cue)
     const timer = window.setTimeout(() => setColumnFlash(null), 700)
     return () => window.clearTimeout(timer)
@@ -396,6 +442,10 @@ export default function RealtimeTranslatorPanel({ locale }: { locale: Locale }) 
   const voiceLive = active && (voicePlaying || phase === 'listening' || phase === 'translating')
   const supplierTurn = speaker === 'supplier'
   const canPassTurn = (phase === 'listening' || phase === 'translating') && !handingOver && (supplierTurn || buyerCanSpeak)
+  const swapDisabled = handingOver || (active ? !canPassTurn : !buyerCanSpeak)
+  const parties = partyLabels[locale]
+  const youSpeaking = active && !handingOver && !supplierTurn
+  const otherSpeaking = active && !handingOver && supplierTurn
   const heardLanguage = supplierTurn ? supplier : buyer
   const spokenLanguage = supplierTurn ? buyer : supplier
 
@@ -408,79 +458,78 @@ export default function RealtimeTranslatorPanel({ locale }: { locale: Locale }) 
         </div>
       </div>
 
-      <p className="mt-3 text-sm text-slate-600">{copy.intro}</p>
-
-      <div className="mt-6 grid grid-cols-1 items-end gap-4 sm:grid-cols-[1fr_auto_1fr]">
-        <label className="block text-sm font-medium text-slate-800">
-          {copy.buyerLanguage}
-          <span className="mt-0.5 block text-xs font-normal text-slate-500">{copy.buyerHint}</span>
-          <select
-            value={buyerLanguage}
-            disabled={active}
-            onChange={(event) => {
-              languagesRef.current.buyer = event.target.value
-              setBuyerLanguage(event.target.value)
-              setError('')
-            }}
-            className="mt-1 w-full rounded-xl border border-primary-200 bg-white px-3 py-2.5 text-sm shadow-sm disabled:opacity-60"
-          >
-            {TRANSLATOR_LANGUAGES.map((language) => (
-              <option key={language.code} value={language.code}>
-                {language.label}
-              </option>
-            ))}
-          </select>
-        </label>
+      <div className="mt-5 grid grid-cols-1 items-stretch gap-3 sm:grid-cols-[1fr_9rem_1fr]">
+        <SpeakerCard title={parties.you} hint={youSpeaking ? copy.buyerSpeaking : copy.buyerHint} speaking={youSpeaking}>
+          <p className="mt-3 text-xl font-bold text-primary-900">{buyer?.label}</p>
+          <label className="mt-3 block text-sm font-medium text-slate-700">
+            {copy.buyerLanguage}
+            <select
+              value={buyerLanguage}
+              disabled={active}
+              onChange={(event) => {
+                languagesRef.current.buyer = event.target.value
+                setBuyerLanguage(event.target.value)
+                setError('')
+              }}
+              className="mt-1 w-full rounded-xl border border-primary-200 bg-white px-3 py-3 text-base font-semibold shadow-sm disabled:opacity-60"
+            >
+              {TRANSLATOR_LANGUAGES.map((language) => (
+                <option key={language.code} value={language.code}>
+                  {language.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        </SpeakerCard>
 
         <button
           type="button"
-          onClick={swap}
-          disabled={active || !buyerCanSpeak}
-          className="h-10 rounded-lg border border-slate-300 px-3 text-sm font-semibold text-slate-800 disabled:opacity-50"
+          onClick={exchangeSpeakers}
+          disabled={swapDisabled}
+          className="flex min-h-28 w-full flex-col items-center justify-center gap-1 rounded-3xl bg-primary-700 px-3 py-4 text-white shadow-lg hover:bg-primary-800 disabled:opacity-50"
           aria-label={copy.swapAria}
-          title={buyerCanSpeak ? copy.swapTitle : copy.voiceOnly}
+          title={!buyerCanSpeak ? copy.voiceOnly : copy.swapTitle}
         >
-          {copy.swap}
+          <span className="text-4xl leading-none" aria-hidden>
+            ⇄
+          </span>
+          <span className="text-lg font-black">{copy.swap}</span>
+          <span className="text-center text-xs font-semibold text-primary-100">
+            {active ? (supplierTurn ? copy.nowBuyer : copy.nowSupplier) : copy.swapTitle}
+          </span>
         </button>
 
-        <label className="block text-sm font-medium text-slate-800">
-          {copy.supplierLanguage}
-          <span className="mt-0.5 block text-xs font-normal text-slate-500">{copy.supplierHint}</span>
-          <select
-            value={supplierLanguage}
-            disabled={active}
-            onChange={(event) => {
-              const next = findTranslatorLanguage(event.target.value)
-              if (!next?.outputCode) return
-              languagesRef.current.supplier = next.code
-              setSupplierLanguage(next.code)
-              setError('')
-            }}
-            className="mt-1 w-full rounded-xl border border-primary-200 bg-white px-3 py-2.5 text-sm shadow-sm disabled:opacity-60"
-          >
-            {TRANSLATOR_LANGUAGES.map((language) => (
-              <option key={language.code} value={language.code} disabled={!language.outputCode}>
-                {language.outputCode ? language.label : `${language.label} — ${copy.noVoice}`}
-              </option>
-            ))}
-          </select>
-        </label>
+        <SpeakerCard title={parties.other} hint={otherSpeaking ? copy.supplierSpeaking : copy.supplierHint} speaking={otherSpeaking}>
+          <p className="mt-3 text-xl font-bold text-primary-900">{supplier?.label}</p>
+          <label className="mt-3 block text-sm font-medium text-slate-700">
+            {copy.supplierLanguage}
+            <select
+              value={supplierLanguage}
+              disabled={active}
+              onChange={(event) => {
+                const next = findTranslatorLanguage(event.target.value)
+                if (!next?.outputCode) return
+                languagesRef.current.supplier = next.code
+                setSupplierLanguage(next.code)
+                setError('')
+              }}
+              className="mt-1 w-full rounded-xl border border-primary-200 bg-white px-3 py-3 text-base font-semibold shadow-sm disabled:opacity-60"
+            >
+              {TRANSLATOR_LANGUAGES.map((language) => (
+                <option key={language.code} value={language.code} disabled={!language.outputCode}>
+                  {language.outputCode ? language.label : `${language.label} — ${copy.noVoice}`}
+                </option>
+              ))}
+            </select>
+          </label>
+        </SpeakerCard>
       </div>
 
-      <LanguageDetectPanel
-        locale={locale}
-        disabled={active || handingOver}
-        onApply={(buyerCode, supplierCode) => {
-          languagesRef.current = { buyer: buyerCode, supplier: supplierCode }
-          setBuyerLanguage(buyerCode)
-          setSupplierLanguage(supplierCode)
-          setError('')
-        }}
-      />
-
-      <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-sm leading-relaxed text-amber-950">
-        {heardOnly.map((language) => language.label).join(', ')}: {copy.voiceOnly}
-      </p>
+      {canContinue && (
+        <p role="status" className="mt-4 rounded-2xl bg-teal-600 px-4 py-3 text-lg font-bold text-white">
+          {parties.phraseDone}
+        </p>
+      )}
 
       {sameLanguage && (
         <p className="mt-2 text-sm text-amber-800">{copy.sameLanguage}</p>
@@ -491,10 +540,6 @@ export default function RealtimeTranslatorPanel({ locale }: { locale: Locale }) 
           {handingOver ? copy.handingOver : supplierTurn ? copy.supplierSpeaking : copy.buyerSpeaking}
         </p>
       )}
-
-      <p className="mt-6 rounded-lg bg-slate-50 px-3 py-2 text-sm leading-relaxed text-slate-700">
-        {copy.openaiNotice}
-      </p>
 
       <div
         role="status"
@@ -526,15 +571,6 @@ export default function RealtimeTranslatorPanel({ locale }: { locale: Locale }) 
           className="rounded-full bg-primary-500 px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-primary-600 disabled:opacity-50"
         >
           {copy.start}
-        </button>
-        <button
-          type="button"
-          onClick={() => void passTurn()}
-          disabled={!canPassTurn}
-          className="rounded-full bg-primary-800 px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-primary-900 disabled:opacity-50"
-          title={!buyerCanSpeak ? copy.turnUnspeakable : undefined}
-        >
-          {supplierTurn ? copy.nowBuyer : copy.nowSupplier}
         </button>
         <button
           type="button"
@@ -591,21 +627,21 @@ export default function RealtimeTranslatorPanel({ locale }: { locale: Locale }) 
 
       <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
         <div>
-          <h2 className="text-sm font-semibold text-slate-800">
+          <h2 className="text-lg font-bold text-slate-900">
             {supplierTurn ? copy.supplierSaid : copy.sourceSpeech}
             {heardLanguage ? ` · ${heardLanguage.label}` : ''}
           </h2>
-          <p className="mt-2 min-h-28 whitespace-pre-wrap rounded-lg bg-slate-50 p-3 text-sm text-slate-800">
+          <p className="mt-2 min-h-36 whitespace-pre-wrap rounded-2xl bg-slate-50 p-4 text-base text-slate-800">
             {sourceTranscript || (supplierTurn ? copy.supplierSourceEmpty : copy.sourceEmpty)}
           </p>
         </div>
         <div>
-          <h2 className="text-sm font-semibold text-slate-800">
+          <h2 className="text-lg font-bold text-slate-900">
             {supplierTurn ? copy.buyerHears : copy.translation}
             {spokenLanguage ? ` · ${spokenLanguage.label}` : ''}
           </h2>
           <p
-            className={`mt-2 min-h-28 whitespace-pre-wrap rounded-xl p-3 text-sm text-slate-800 transition-colors ${
+            className={`mt-2 min-h-36 whitespace-pre-wrap rounded-2xl p-4 text-base text-slate-800 transition-colors ${
               columnFlash === 'start'
                 ? 'bg-sky-100 ring-2 ring-sky-500'
                 : columnFlash === 'end'
@@ -625,6 +661,23 @@ export default function RealtimeTranslatorPanel({ locale }: { locale: Locale }) 
           )}
         </div>
       </div>
+
+      <p className="mt-6 rounded-lg bg-slate-50 px-3 py-2 text-sm leading-relaxed text-slate-700">
+        {copy.openaiNotice}
+      </p>
+      <p className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-sm leading-relaxed text-amber-950">
+        {heardOnly.map((language) => language.label).join(', ')}: {copy.voiceOnly}
+      </p>
+      <LanguageDetectPanel
+        locale={locale}
+        disabled={active || handingOver}
+        onApply={(buyerCode, supplierCode) => {
+          languagesRef.current = { buyer: buyerCode, supplier: supplierCode }
+          setBuyerLanguage(buyerCode)
+          setSupplierLanguage(supplierCode)
+          setError('')
+        }}
+      />
     </section>
   )
 }

@@ -11,7 +11,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       <header className="bg-primary-900 text-white">
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-4">
+        <div className="mx-auto flex max-w-4xl items-center justify-between gap-4 px-4 py-4">
           <div>
             <p className="text-lg font-bold tracking-tight">CIPS</p>
             <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-primary-200">
@@ -34,7 +34,7 @@ export default function HomePage() {
           </label>
         </div>
       </header>
-      <main className="mx-auto max-w-3xl px-4 py-6">
+      <main className="mx-auto max-w-4xl px-4 py-6">
         <AccessGate>
           <RealtimeTranslatorPanel locale={locale} />
         </AccessGate>

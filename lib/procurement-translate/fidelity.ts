@@ -362,10 +362,14 @@ function extractQuantities(raw: string): Quantity[] {
     (left, right) =>
       Math.max(...right.forms.map((form) => form.length)) - Math.max(...left.forms.map((form) => form.length))
   )
+  const amountToken = numberSource()
   for (const unit of units) {
-    const pattern = unit.forms.map(unitAlternative).join('|')
-    const trailing = new RegExp(`(\\d+(?:\\.\\d+)?)\\s*(?:${pattern})`, 'giu')
-    const leading = new RegExp(`(?:${pattern})\\s*(\\d+(?:\\.\\d+)?)`, 'giu')
+    const pattern = [...unit.forms]
+      .sort((left, right) => right.length - left.length)
+      .map(unitAlternative)
+      .join('|')
+    const trailing = new RegExp(`(?<=^|[^\\p{L}\\p{N}])(${amountToken})\\s*(?:${pattern})`, 'giu')
+    const leading = new RegExp(`(?:${pattern})\\s*(${amountToken})(?=$|[^\\p{L}\\p{N}])`, 'giu')
     for (const match of text.matchAll(trailing)) {
       const start = match.index ?? 0
       claim(start, start + match[0].length, canonNumber(match[1]), unit.id)
@@ -510,6 +514,7 @@ function compareQuantities(source: Quantity[], target: Quantity[]): FidelityFind
         severity: 'critical',
         code: mismatchCode(item, right),
         detail: `${item.value} ${item.unit}`,
+        sourceFragment: item.surface,
       })
     }
     for (const item of right) {
@@ -517,6 +522,7 @@ function compareQuantities(source: Quantity[], target: Quantity[]): FidelityFind
         severity: 'critical',
         code: mismatchCode(item, left),
         detail: `extra ${item.value} ${item.unit}`,
+        translationFragment: item.surface,
       })
     }
   }
@@ -701,6 +707,63 @@ const BEFORE_AWARD = [
   'antes da adjudicacao', '授予前', '落札前', '낙찰 전', 'sebelum penetapan', 'trước khi trao thầu',
 ]
 
+const AFTER_ORDER = [
+  'after receiving the purchase order', 'after the purchase order', 'after receiving the order', 'after the order',
+  'после получения заказа', 'после заказа',
+  'despues de recibir el pedido', 'despues del pedido',
+  'apres reception de la commande', 'apres la commande',
+  'nach eingang der bestellung', 'nach der bestellung',
+  'dopo aver ricevuto l ordine', 'dopo l ordine',
+  'apos receber o pedido', 'apos o pedido',
+  '订单后', '受注後',
+]
+const BEFORE_ORDER = [
+  'before receiving the purchase order', 'before the purchase order', 'prior to the order', 'before the order',
+  'до получения заказа', 'перед заказом', 'до заказа',
+  'antes de recibir el pedido', 'antes del pedido',
+  'avant reception de la commande', 'avant la commande',
+  'vor eingang der bestellung', 'vor der bestellung',
+  'prima di ricevere l ordine', 'prima dell ordine',
+  'antes de receber o pedido', 'antes do pedido',
+  '订单前', '受注前',
+]
+const AFTER_DELIVERY = [
+  'after the delivery', 'after delivery', 'after shipment',
+  'после поставки', 'после доставки', 'после отгрузки',
+  'despues de la entrega', 'apres la livraison', 'nach der lieferung', 'dopo la consegna', 'apos a entrega',
+  '交货后', '納品後',
+]
+const BEFORE_DELIVERY = [
+  'before the delivery', 'before delivery', 'prior to delivery', 'before shipment',
+  'до поставки', 'перед поставкой', 'до доставки', 'до отгрузки',
+  'antes de la entrega', 'avant la livraison', 'vor der lieferung', 'prima della consegna', 'antes da entrega',
+  '交货前', '納品前',
+]
+const AFTER_PAYMENT = [
+  'after the payment', 'after payment',
+  'после оплаты', 'после платежа',
+  'despues del pago', 'apres le paiement', 'nach der zahlung', 'dopo il pagamento', 'apos o pagamento',
+  '付款后',
+]
+const BEFORE_PAYMENT = [
+  'before the payment', 'before payment', 'prior to payment',
+  'до оплаты', 'перед оплатой', 'до платежа',
+  'antes del pago', 'avant le paiement', 'vor der zahlung', 'prima del pagamento', 'antes do pagamento',
+  '付款前',
+]
+
+const RELATION_ANCHORS: Array<{
+  id: string
+  severity: 'critical' | 'important'
+  after: readonly string[]
+  before: readonly string[]
+}> = [
+  { id: 'award', severity: 'important', after: AFTER_AWARD, before: BEFORE_AWARD },
+  { id: 'order', severity: 'critical', after: AFTER_ORDER, before: BEFORE_ORDER },
+  { id: 'delivery', severity: 'critical', after: AFTER_DELIVERY, before: BEFORE_DELIVERY },
+  { id: 'payment', severity: 'critical', after: AFTER_PAYMENT, before: BEFORE_PAYMENT },
+]
+
 const PRICE_ANCHORS = [
   'price', 'precio', 'prix', 'preis', 'prezzo', 'preco',
   'цена', 'цене', 'цену', 'цены', 'ценой', 'стоимост', '价格', '価格',
@@ -794,22 +857,201 @@ function compareCommercial(source: string, translation: string): FidelityFinding
     })
   }
 
-  const sourceAfter = matchedForm(source, AFTER_AWARD)
-  const sourceBefore = matchedForm(source, BEFORE_AWARD)
-  const translatedAfter = matchedForm(translation, AFTER_AWARD)
-  const translatedBefore = matchedForm(translation, BEFORE_AWARD)
-  const sourceOrder = sourceAfter && !sourceBefore ? 'after' : sourceBefore && !sourceAfter ? 'before' : null
-  const translatedOrder = translatedAfter && !translatedBefore ? 'after' : translatedBefore && !translatedAfter ? 'before' : null
-  if (sourceOrder && translatedOrder && sourceOrder !== translatedOrder) {
+  for (const anchor of RELATION_ANCHORS) {
+    const sourcePole = relationPole(source, anchor.after, anchor.before)
+    const translatedPole = relationPole(translation, anchor.after, anchor.before)
+    if (!sourcePole || !translatedPole || sourcePole.pole === translatedPole.pole) continue
     findings.push({
-      severity: 'important',
+      severity: anchor.severity,
       code: 'relation',
-      detail: `${sourceOrder}->${translatedOrder}`,
-      sourceFragment: sourceOrder === 'after' ? sourceAfter : sourceBefore,
-      translationFragment: translatedOrder === 'after' ? translatedAfter : translatedBefore,
+      detail: `${anchor.id}:${sourcePole.pole}->${translatedPole.pole}`,
+      sourceFragment: sourcePole.surface,
+      translationFragment: translatedPole.surface,
     })
   }
   return findings
+}
+
+function relationPole(
+  text: string,
+  after: readonly string[],
+  before: readonly string[]
+): { pole: 'after' | 'before'; surface: string } | null {
+  const afterSurface = matchedForm(text, after)
+  const beforeSurface = matchedForm(text, before)
+  if (afterSurface && !beforeSurface) return { pole: 'after', surface: afterSurface }
+  if (beforeSurface && !afterSurface) return { pole: 'before', surface: beforeSurface }
+  return null
+}
+
+const CURRENCIES = new Set(['usd', 'eur', 'gbp', 'cny', 'rub'])
+const REDUCE_FORMS = [
+  'сниз', 'скидк', 'уменьш', 'reduce', 'discount', 'lower', 'decrease',
+  'reducir', 'descuento', 'reduire', 'remise', 'senken', 'rabatt', '降低', '减少',
+]
+const INCREASE_FORMS = [
+  'увелич', 'повыс', 'наценк', 'increase', 'raise', 'surcharge',
+  'aumentar', 'augmenter', 'erhöhen', '提高', '增加',
+]
+
+function currencyAmounts(text: string): Quantity[] {
+  return extractQuantities(text).filter((item) => CURRENCIES.has(item.unit))
+}
+
+function percentAmount(text: string): Quantity | null {
+  const items = extractQuantities(text).filter((item) => item.unit === 'percent')
+  return items.length === 1 ? items[0] : null
+}
+
+function priceDirection(text: string): 'reduce' | 'increase' | null {
+  const reduce = REDUCE_FORMS.some((form) => textHasForm(text, form))
+  const increase = INCREASE_FORMS.some((form) => textHasForm(text, form))
+  if (reduce === increase) return null
+  return reduce ? 'reduce' : 'increase'
+}
+
+function lastSingle(priorSources: readonly string[], pick: (text: string) => Quantity | null): Quantity | null {
+  for (let index = priorSources.length - 1; index >= 0; index -= 1) {
+    const item = pick(priorSources[index])
+    if (item) return item
+  }
+  return null
+}
+
+function singleCurrency(text: string): Quantity | null {
+  const amounts = currencyAmounts(text)
+  return amounts.length === 1 ? amounts[0] : null
+}
+
+function leadTimes(text: string): Quantity[] {
+  return extractQuantities(text).filter((item) => {
+    if (item.unit.endsWith('_ago') || item.unit === 'minute') return false
+    return family(item.unit) === 'duration'
+  })
+}
+
+function singleLead(text: string): Quantity | null {
+  const items = leadTimes(text)
+  return items.length === 1 ? items[0] : null
+}
+
+function explicitBasis(text: string): { id: string; surface: string } | null {
+  const polarity = pricePolarity(text)
+  if (polarity) {
+    const entry = PROCUREMENT_GLOSSARY.basis.find((item) => item.id === polarity)
+    return { id: polarity, surface: (entry && matchedForm(text, entry.forms)) || polarity }
+  }
+  return singleEntry(text, PROCUREMENT_GLOSSARY.basis.filter((entry) => entry.id !== 'included' && entry.id !== 'excluded'))
+}
+
+function pricesClose(actual: number, expected: number): boolean {
+  return Math.abs(actual - expected) <= Math.max(0.05, Math.abs(expected) * 0.001)
+}
+
+function applyNegotiationMemory(
+  findings: FidelityFinding[],
+  source: string,
+  translation: string,
+  priorSources: readonly string[]
+): FidelityFinding[] {
+  return applyDeadlineMemory(
+    applyBasisMemory(applyPriceMemory(findings, source, translation, priorSources), source, translation, priorSources),
+    source,
+    translation,
+    priorSources
+  )
+}
+
+function applyPriceMemory(
+  findings: FidelityFinding[],
+  source: string,
+  translation: string,
+  priorSources: readonly string[]
+): FidelityFinding[] {
+  const price = lastSingle(priorSources, singleCurrency)
+  const direction = priceDirection(source)
+  const percent = percentAmount(source)
+  if (!price || !direction || !percent || currencyAmounts(source).length > 0) return findings
+  const percentValue = Number(percent.value)
+  const base = Number(price.value)
+  if (!Number.isFinite(percentValue) || !Number.isFinite(base)) return findings
+  const expected = direction === 'reduce' ? base * (1 - percentValue / 100) : base * (1 + percentValue / 100)
+  const translatedCurrency = currencyAmounts(translation)
+  const translatedPercent = percentAmount(translation)
+  const samePercent = translatedPercent?.value === percent.value && priceDirection(translation) === direction
+  const statesExpected = translatedCurrency.length === 1 && pricesClose(Number(translatedCurrency[0].value), expected)
+  const noise = (finding: FidelityFinding) => {
+    if (finding.code !== 'number' && finding.code !== 'unit') return false
+    if (finding.detail === `${percent.value} percent`) return true
+    return translatedCurrency.some((item) => finding.detail === `extra ${item.value} ${item.unit}`)
+  }
+  if (statesExpected || (samePercent && translatedCurrency.length === 0)) {
+    return findings.filter((finding) => !noise(finding))
+  }
+  if (translatedCurrency.length !== 1) return findings
+  return [
+    ...findings.filter((finding) => !noise(finding)),
+    {
+      severity: 'critical',
+      code: 'number',
+      detail: `${direction} ${percent.value} -> ${expected} ${price.unit}`,
+      sourceFragment: percent.surface,
+      translationFragment: translatedCurrency[0].surface,
+    },
+  ]
+}
+
+function applyBasisMemory(
+  findings: FidelityFinding[],
+  source: string,
+  translation: string,
+  priorSources: readonly string[]
+): FidelityFinding[] {
+  if (explicitBasis(source)) return findings
+  const translated = explicitBasis(translation)
+  if (!translated) return findings
+  let remembered: { id: string; surface: string } | null = null
+  for (let index = priorSources.length - 1; index >= 0; index -= 1) {
+    remembered = explicitBasis(priorSources[index])
+    if (remembered) break
+  }
+  if (!remembered || remembered.id === translated.id) return findings
+  return [
+    ...findings,
+    {
+      severity: 'critical',
+      code: 'basis',
+      detail: `${remembered.id}->${translated.id}`,
+      sourceFragment: remembered.surface,
+      translationFragment: translated.surface,
+    },
+  ]
+}
+
+function applyDeadlineMemory(
+  findings: FidelityFinding[],
+  source: string,
+  translation: string,
+  priorSources: readonly string[]
+): FidelityFinding[] {
+  if (leadTimes(source).length > 0) return findings
+  const translated = singleLead(translation)
+  if (!translated) return findings
+  const remembered = lastSingle(priorSources, singleLead)
+  if (!remembered) return findings
+  const same = translated.value === remembered.value && unitsCompatible(remembered.unit, translated.unit)
+  const extraDetail = `extra ${translated.value} ${translated.unit}`
+  if (same) return findings.filter((finding) => finding.detail !== extraDetail)
+  return [
+    ...findings.filter((finding) => finding.detail !== extraDetail),
+    {
+      severity: 'critical',
+      code: 'duration',
+      detail: `${remembered.value} ${remembered.unit}->${translated.value} ${translated.unit}`,
+      sourceFragment: remembered.surface,
+      translationFragment: translated.surface,
+    },
+  ]
 }
 
 function uncertain(text: string): boolean {
@@ -873,5 +1115,5 @@ export function assessProcurementFidelity(input: ProcurementFidelityInput): Proc
     pushUnique(findings, finding)
   }
 
-  return { findings }
+  return { findings: applyNegotiationMemory(findings, source, translation, priorSources) }
 }

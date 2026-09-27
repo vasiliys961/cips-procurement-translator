@@ -2,8 +2,9 @@ import { describe, expect, it } from 'vitest'
 import { fidelityLineText, reportForTurn } from './fidelity-notice'
 
 describe('fidelity notice', () => {
-  it('prints both fragments only when both sides are known', () => {
+  it('prints the fragments that are known', () => {
     expect(fidelityLineText('Dose needs a check', '5 mg', '50 мг')).toBe('Dose needs a check: 5 mg ↔ 50 мг')
+    expect(fidelityLineText('Number changed', '1200 dollars')).toBe('Number changed: 1200 dollars')
     expect(fidelityLineText('Negation did not match')).toBe('Negation did not match')
   })
 

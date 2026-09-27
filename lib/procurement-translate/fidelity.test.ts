@@ -164,6 +164,68 @@ describe('procurement fidelity phrases', () => {
     expect(codesOf('Срок поставки 14 дней.', 'The lead time is 14 days.')).not.toContain('relation')
   })
 
+  it('flags before and after the order, delivery, and payment', () => {
+    const order = assessProcurementFidelity({
+      source: 'Поставим в течение 30 дней после заказа.',
+      translation: 'We can deliver within 30 days before the order.',
+    })
+    const orderFinding = order.findings.find((finding) => finding.code === 'relation')
+    expect(orderFinding?.detail).toBe('order:after->before')
+    expect(orderFinding?.sourceFragment).toBe('после заказа')
+    expect(orderFinding?.translationFragment).toBe('before the order')
+    expectFaithful('Поставим в течение 30 дней после заказа.', 'We can deliver within 30 days after the order.')
+    expect(codesOf('Оплата после поставки.', 'Payment is before delivery.')).toContain('relation')
+    expectFaithful('Оплата после поставки.', 'Payment is after delivery.')
+    expect(codesOf('Платёж до оплаты товара.', 'Payment is after payment.')).toContain('relation')
+    expect(codesOf('Срок поставки 14 дней.', 'The lead time is 14 days.')).not.toContain('relation')
+  })
+
+  it('shows a dropped price and a changed currency as the words that moved', () => {
+    const dropped = assessProcurementFidelity({
+      source: 'Цена 1200 долларов.',
+      translation: 'The price is confirmed.',
+    })
+    expect(dropped.findings.some((finding) => finding.sourceFragment?.includes('1200'))).toBe(true)
+    const currency = assessProcurementFidelity({
+      source: 'Цена €12.50.',
+      translation: 'The price is €125.',
+    })
+    const price = currency.findings.find((finding) => finding.code === 'number')
+    expect(price?.sourceFragment).toMatch(/12\.50/)
+    expect(price?.translationFragment).toMatch(/125/)
+  })
+
+  it('checks a percent change against the last stated price', () => {
+    const prior = ['Цена 100000 евро.']
+    expectFaithful('Снизим на пять процентов.', 'We can reduce it by five percent.', prior)
+    expectFaithful('Снизим на пять процентов.', 'The price is 95000 euros.', prior)
+    const stale = assessProcurementFidelity({
+      source: 'Снизим на пять процентов.',
+      translation: 'The price is 100000 euros.',
+      priorSources: prior,
+    })
+    const price = stale.findings.find((finding) => finding.code === 'number')
+    expect(price?.sourceFragment).toMatch(/пять процентов/)
+    expect(price?.translationFragment).toMatch(/100000/)
+    expectFaithful('Снизим на пять процентов.', 'We can reduce it by five percent.')
+  })
+
+  it('remembers the last basis and the last deadline', () => {
+    const included = ['100 dollars included.']
+    expectFaithful('Это подходит.', 'That works, included.', included)
+    expect(codesOf('Это подходит.', 'That works, excluded.', included)).toContain('basis')
+    const lead = ['Срок поставки 14 дней.']
+    expectFaithful('Срок тот же.', 'The lead time is still 14 days.', lead)
+    const moved = assessProcurementFidelity({
+      source: 'Срок тот же.',
+      translation: 'The lead time is 30 days.',
+      priorSources: lead,
+    })
+    const duration = moved.findings.find((finding) => finding.code === 'duration')
+    expect(duration?.sourceFragment).toMatch(/14/)
+    expect(duration?.translationFragment).toMatch(/30/)
+  })
+
   it('catches a party, an incoterm, and the award order in other languages', () => {
     expect(codesOf('El comprador acepta.', 'Le fournisseur accepte.')).toContain('party')
     expect(codesOf('买方接受。', '卖方接受。')).toContain('party')

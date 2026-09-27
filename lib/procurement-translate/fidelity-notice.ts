@@ -22,16 +22,18 @@ export function fidelityDisplayLines(report: ProcurementFidelityReport | null | 
 }
 
 function lineFromFinding(finding: FidelityFinding): FidelityDisplayLine {
-  const sourceFragment = cleanFragment(finding.sourceFragment)
-  const translationFragment = cleanFragment(finding.translationFragment)
-  if (sourceFragment && translationFragment) {
-    return { severity: finding.severity, code: finding.code, sourceFragment, translationFragment }
+  return {
+    severity: finding.severity,
+    code: finding.code,
+    sourceFragment: cleanFragment(finding.sourceFragment),
+    translationFragment: cleanFragment(finding.translationFragment),
   }
-  return { severity: finding.severity, code: finding.code }
 }
 
 export function fidelityLineText(title: string, sourceFragment?: string, translationFragment?: string): string {
   if (sourceFragment && translationFragment) return `${title}: ${sourceFragment} ↔ ${translationFragment}`
+  if (sourceFragment) return `${title}: ${sourceFragment}`
+  if (translationFragment) return `${title}: ${translationFragment}`
   return title
 }
 

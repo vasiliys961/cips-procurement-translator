@@ -2,9 +2,11 @@
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import type { Locale } from '@/lib/i18n/config'
+import { callUi } from '@/lib/i18n/call-ui'
 import { partyLabels, translatorUi, type TranslatorUi } from '@/lib/i18n/translator-ui'
 import { REALTIME_TRANSLATION_CREDITS_PER_MINUTE } from '@/lib/cost-calculator'
 import { recordUsageCost } from '@/lib/simple-logger'
+import PhoneCall from '@/components/PhoneCall'
 import LanguageDetectPanel from '@/components/LanguageDetectPanel'
 import { fidelityDisplayLines, fidelityLineText } from '@/lib/procurement-translate/fidelity-notice'
 import { TurnGuard } from '@/lib/realtime-turn'
@@ -142,6 +144,7 @@ export default function RealtimeTranslatorPanel({ locale }: { locale: Locale }) 
   const [speaker, setSpeaker] = useState<'buyer' | 'supplier' | null>(null)
   const [handingOver, setHandingOver] = useState(false)
   const [canContinue, setCanContinue] = useState(false)
+  const [callSketch, setCallSketch] = useState(false)
   const speakerRef = useRef<'buyer' | 'supplier' | null>(null)
   const turns = useRef(new TurnGuard())
   const accruedMs = useRef(0)
@@ -531,6 +534,19 @@ export default function RealtimeTranslatorPanel({ locale }: { locale: Locale }) 
         </p>
       )}
 
+      {callSketch && (
+        <PhoneCall
+          locale={locale}
+          hostLanguage={buyerLanguage}
+          guestLanguage={supplierLanguage}
+          youLabel={parties.you}
+          otherLabel={parties.other}
+          youLanguage={buyer?.label ?? buyerLanguage}
+          otherLanguage={supplier?.label ?? supplierLanguage}
+          onClose={() => setCallSketch(false)}
+        />
+      )}
+
       {sameLanguage && (
         <p className="mt-2 text-sm text-amber-800">{copy.sameLanguage}</p>
       )}
@@ -567,10 +583,18 @@ export default function RealtimeTranslatorPanel({ locale }: { locale: Locale }) 
         <button
           type="button"
           onClick={start}
-          disabled={!canStart || handingOver}
+          disabled={!canStart || handingOver || callSketch}
           className="rounded-full bg-primary-500 px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-primary-600 disabled:opacity-50"
         >
           {copy.start}
+        </button>
+        <button
+          type="button"
+          onClick={() => setCallSketch(true)}
+          disabled={active || handingOver || sameLanguage || !supplierCanSpeak || !buyerCanSpeak}
+          className="rounded-full bg-primary-800 px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-primary-900 disabled:opacity-50"
+        >
+          {callUi[locale].call}
         </button>
         <button
           type="button"

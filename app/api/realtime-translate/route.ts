@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { authorizeCall } from '@/lib/call-room'
 import { findTranslatorLanguage } from '@/lib/realtime-translate'
 import { readSessionEmail, unauthorized } from '@/lib/session'
 
@@ -38,8 +39,6 @@ function publicError(text: string): string {
 }
 
 export async function POST(request: NextRequest) {
-  if (!readSessionEmail(request)) return unauthorized()
-
   const apiKey = process.env.OPENAI_API_KEY
   if (!apiKey) {
     return NextResponse.json(
@@ -51,14 +50,20 @@ export async function POST(request: NextRequest) {
   let sourceLanguage = ''
   let targetLanguage = ''
   let offerSdp = ''
+  let callToken = ''
   try {
     const body = await request.json()
     sourceLanguage = String(body?.sourceLanguage || '')
     targetLanguage = String(body?.targetLanguage || '')
     offerSdp = typeof body?.sdp === 'string' ? body.sdp : ''
+    callToken = typeof body?.callToken === 'string' ? body.callToken : ''
   } catch {
     return NextResponse.json({ error: 'Invalid JSON', code: 'invalid_json' }, { status: 400 })
   }
+
+  const signedIn = Boolean(readSessionEmail(request))
+  const callAllowed = authorizeCall(callToken, sourceLanguage, targetLanguage, process.env.AUTH_SECRET || '')
+  if (!signedIn && !callAllowed) return unauthorized()
 
   const source = findTranslatorLanguage(sourceLanguage)
   const target = findTranslatorLanguage(targetLanguage)

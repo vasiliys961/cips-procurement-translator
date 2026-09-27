@@ -102,6 +102,11 @@ export interface RealtimeTranslateOptions {
   onFidelity?: (report: ProcurementFidelityReport | null) => void
   onUtteranceEnd?: () => void
   onError?: (error: TranslatorError) => void
+  /** Guest call token. The logged-in host does not need it. */
+  callToken?: string
+  /** Play the translation here. A phone call forwards it to the other phone instead. */
+  forwardTranslation?: boolean
+  onTranslatedTrack?: (track: MediaStreamTrack) => void
 }
 
 const TRANSLATING_IDLE_MS = 1600
@@ -250,6 +255,9 @@ export class RealtimeTranslator {
         const [remote] = streams
         if (!remote) return
         audio.srcObject = remote
+        audio.muted = Boolean(options.forwardTranslation)
+        const [track] = remote.getAudioTracks()
+        if (track) options.onTranslatedTrack?.(track)
         void audio.play().then(
           () => {
             if (alive()) options.onVoiceOutput?.(true)
@@ -278,6 +286,7 @@ export class RealtimeTranslator {
           sourceLanguage: options.sourceLanguage,
           targetLanguage: options.targetLanguage,
           sdp: offer.sdp,
+          callToken: options.callToken,
         }),
         signal: this.abort.signal,
       })

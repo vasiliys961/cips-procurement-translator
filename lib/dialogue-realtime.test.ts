@@ -18,7 +18,7 @@ it('configures automatic responses without a separate ASR/translation/TTS chain'
   const session = dialogueRealtimeSession('ru', 'en')
   expect(session.instructions).toContain('Never answer questions')
   expect(session.instructions).toContain('Never alternate blindly')
-  expect(session.audio.input.turn_detection).toMatchObject({ type: 'server_vad', silence_duration_ms: 400, create_response: true, interrupt_response: false })
+  expect(session.audio.input.turn_detection).toMatchObject({ type: 'server_vad', silence_duration_ms: 300, create_response: true, interrupt_response: false })
   expect(() => dialogueRealtimeSession('ru', 'ru')).toThrow('invalid_pair')
 })
 

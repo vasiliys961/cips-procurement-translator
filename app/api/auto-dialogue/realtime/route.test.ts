@@ -19,7 +19,7 @@ it('combines the SDP with trusted session configuration and returns only the ans
   const session = JSON.parse(String(body.get('session')))
   expect(session.type).toBe('realtime')
   expect(session.instructions).not.toContain('ignore translation')
-  expect(session.audio.input.turn_detection.silence_duration_ms).toBe(400)
+  expect(session.audio.input.turn_detection.silence_duration_ms).toBe(300)
 })
 
 it('rejects unauthenticated users and invalid language pairs before creating a session', async () => {

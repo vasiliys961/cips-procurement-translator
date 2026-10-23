@@ -4,6 +4,7 @@ import { languageFromWhisperName } from '@/lib/detect-language'
 import { ambiguousUtterance, dialogueTarget, MAX_AUDIO_BYTES } from '@/lib/auto-dialogue'
 import { findTranslatorLanguage } from '@/lib/realtime-translate'
 import { assessProcurementFidelity } from '@/lib/procurement-translate/fidelity'
+import { speechToken } from '@/lib/dialogue-speech-token'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -73,13 +74,9 @@ export async function POST(request: NextRequest) {
     const translation = typeof choice?.message?.content === 'string' ? choice.message.content.trim() : ''
     if (!translation || translation.length > 4096 || choice.finish_reason !== 'stop') throw new Error('invalid_translation')
     const fidelity = assessProcurementFidelity({ source, translation, priorSources: [] })
-    const speech = await call('audio/speech', {
-      model: process.env.AUTO_DIALOGUE_TTS_MODEL || 'gpt-4o-mini-tts',
-      voice: 'alloy', input: translation, response_format: 'mp3',
-    })
     return NextResponse.json({
       source, translation, language, target, fidelity,
-      audio: Buffer.from(await speech.arrayBuffer()).toString('base64'),
+      audioUrl: `/api/auto-dialogue/speech?token=${speechToken(translation, email, process.env.AUTH_SECRET || '')}`,
     }, { headers: { 'Cache-Control': 'no-store' } })
   } catch {
     return NextResponse.json({ code: signal.aborted ? 'timeout' : 'translation_failed' }, { status: 502 })

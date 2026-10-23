@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { DialogueMicrophone } from './auto-dialogue-capture'
 
-afterEach(() => vi.unstubAllGlobals())
+afterEach(() => { vi.unstubAllGlobals(); vi.useRealTimers() })
 
 function setup(getStream?: () => Promise<unknown>) {
   const track = { enabled: true, onended: null, stop: vi.fn() }
@@ -51,5 +51,33 @@ describe('dialogue microphone lifecycle', () => {
     grant(stream)
     await started
     expect(track.stop).toHaveBeenCalledTimes(1)
+  })
+  it('requests microphone permission even when audio resume never resolves', async () => {
+    vi.useFakeTimers()
+    const { track } = setup()
+    const context = new AudioContext()
+    context.resume = vi.fn(() => new Promise<void>(() => undefined))
+    const getMedia = vi.spyOn(navigator.mediaDevices, 'getUserMedia')
+    const mic = new DialogueMicrophone()
+    const started = mic.start(vi.fn(), vi.fn(), vi.fn(), { context })
+    expect(getMedia).toHaveBeenCalledTimes(1)
+    const rejected = expect(started).rejects.toThrow('audio_blocked')
+    await vi.advanceTimersByTimeAsync(5000)
+    await rejected
+    mic.stop()
+    expect(track.stop).toHaveBeenCalledTimes(1)
+  })
+  it('times out ignored permission prompts and stops a late stream', async () => {
+    vi.useFakeTimers()
+    let grant!: (stream: unknown) => void
+    const { track, stream } = setup(() => new Promise(resolve => { grant = resolve }))
+    const mic = new DialogueMicrophone()
+    const rejected = expect(mic.start(vi.fn(), vi.fn(), vi.fn())).rejects.toThrow('microphone_timeout')
+    await vi.advanceTimersByTimeAsync(15_000)
+    await rejected
+    grant(stream)
+    await Promise.resolve()
+    expect(track.stop).toHaveBeenCalledTimes(1)
+    mic.stop()
   })
 })

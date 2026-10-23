@@ -3,11 +3,12 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Locale } from '@/lib/i18n/config'
 import { translatorUi } from '@/lib/i18n/translator-ui'
-import { DialogueMicrophone } from '@/lib/auto-dialogue-capture'
+import { audioDeadline, DialogueMicrophone } from '@/lib/auto-dialogue-capture'
+import { encodeWav } from '@/lib/auto-dialogue'
 import { TRANSLATOR_LANGUAGES, type ProcurementFidelityReport } from '@/lib/realtime-translate'
 import { fidelityDisplayLines, fidelityLineText } from '@/lib/procurement-translate/fidelity-notice'
 
-type Phase = 'ready' | 'connecting' | 'listening' | 'speaking' | 'processing' | 'playing' | 'blocked' | 'error'
+type Phase = 'ready' | 'connecting' | 'listening' | 'speaking' | 'processing' | 'buffering' | 'playing' | 'blocked' | 'error'
 type Turn = { source: string; translation: string; language: string; target: string; fidelity: ProcurementFidelityReport }
 
 export default function AutoDialogue({ locale, onActiveChange }: { locale: Locale; onActiveChange: (active: boolean) => void }) {
@@ -17,13 +18,14 @@ export default function AutoDialogue({ locale, onActiveChange }: { locale: Local
   const [second, setSecond] = useState('en')
   const [phase, setPhase] = useState<Phase>('ready')
   const [notice, setNotice] = useState('')
+  const [level, setLevel] = useState(0)
   const [turns, setTurns] = useState<Turn[]>([])
   const mic = useRef<DialogueMicrophone | null>(null)
   const epoch = useRef(0)
   const abort = useRef<AbortController | null>(null)
   const output = useRef<AudioContext | null>(null)
-  const source = useRef<AudioBufferSourceNode | null>(null)
-  const pending = useRef<AudioBuffer | null>(null)
+  const player = useRef<HTMLAudioElement | null>(null)
+  const pendingUrl = useRef<string | null>(null)
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const active = !['ready', 'error'].includes(phase)
   const label = (code: string) => TRANSLATOR_LANGUAGES.find(item => item.code === code)?.label ?? code
@@ -36,8 +38,16 @@ export default function AutoDialogue({ locale, onActiveChange }: { locale: Local
     mic.current = null
     if (timer.current) clearTimeout(timer.current)
     timer.current = null
-    if (source.current) { source.current.onended = null; source.current.stop(); source.current = null }
-    pending.current = null
+    if (player.current) {
+      player.current.onended = null
+      player.current.onplaying = null
+      player.current.onerror = null
+      player.current.pause()
+      player.current.removeAttribute('src')
+      player.current.load()
+      player.current = null
+    }
+    pendingUrl.current = null
     void output.current?.close().catch(() => undefined)
     output.current = null
   }
@@ -57,30 +67,37 @@ export default function AutoDialogue({ locale, onActiveChange }: { locale: Local
       if (id !== epoch.current) return
       mic.current?.resume()
       setPhase('listening')
-    }, 350)
+    }, 200)
   }
   const play = async (id: number) => {
-    const context = output.current
-    const buffer = pending.current
-    if (!context || !buffer || id !== epoch.current) return
-    try {
-      await context.resume()
+    const audio = player.current
+    const url = pendingUrl.current
+    if (!audio || !url || id !== epoch.current) return
+    setPhase('buffering')
+    audio.onplaying = () => { if (id === epoch.current) setPhase('playing') }
+    audio.onended = () => {
       if (id !== epoch.current) return
-      if (context.state !== 'running') { setPhase('blocked'); return }
-      const node = context.createBufferSource()
-      node.buffer = buffer
-      node.connect(context.destination)
-      source.current = node
-      node.onended = () => {
-        if (id !== epoch.current) return
-        source.current = null
-        pending.current = null
-        listenAgain(id)
+      pendingUrl.current = null
+      listenAgain(id)
+    }
+    audio.onerror = () => {
+      if (id !== epoch.current) return
+      cleanup()
+      setNotice(ru ? 'Не удалось получить озвучивание. Проверьте соединение и нажмите «Старт».' : 'Speech could not be loaded. Check your connection and press Start.')
+      setPhase('error')
+    }
+    if (audio.getAttribute('src') !== url) audio.src = url
+    try {
+      await audioDeadline(audio.play(), 20_000, 'speech_timeout')
+    } catch (error) {
+      if (id !== epoch.current) return
+      if (error instanceof Error && error.message === 'speech_timeout') {
+        cleanup()
+        setNotice(ru ? 'Озвучивание не ответило вовремя. Текст перевода показан ниже; попробуйте запустить диалог снова.' : 'Speech timed out. The translation text is shown below; try starting again.')
+        setPhase('error')
+      } else {
+        setPhase('blocked')
       }
-      node.start()
-      setPhase('playing')
-    } catch {
-      if (id === epoch.current) setPhase('blocked')
     }
   }
 
@@ -88,6 +105,7 @@ export default function AutoDialogue({ locale, onActiveChange }: { locale: Local
     cleanup()
     const id = epoch.current
     setNotice('')
+    setLevel(0)
     setTurns([])
     setPhase('connecting')
     if (!navigator.mediaDevices?.getUserMedia || !window.AudioContext || !window.AudioWorkletNode) {
@@ -98,18 +116,47 @@ export default function AutoDialogue({ locale, onActiveChange }: { locale: Local
     const context = new AudioContext()
     output.current = context
     void context.resume().catch(() => undefined)
+    const audio = new Audio()
+    audio.setAttribute('playsinline', 'true')
+    audio.preload = 'auto'
+    player.current = audio
+    // Unlock this media element during the Start gesture for later streamed speech.
+    const primer = URL.createObjectURL(encodeWav(new Float32Array(800), 16000))
+    audio.src = primer
+    void audio.play().then(() => {
+      if (id === epoch.current && audio.src === primer) audio.pause()
+    }, () => undefined).finally(() => URL.revokeObjectURL(primer))
     const microphone = new DialogueMicrophone()
     mic.current = microphone
-    const fail = () => {
+    const fail = (error?: unknown) => {
       if (id !== epoch.current) return
       cleanup()
-      setNotice(ru ? 'Не удалось продолжить. Проверьте микрофон и соединение, затем нажмите «Начать».' : 'Could not continue. Check the microphone and connection, then press Start.')
+      setLevel(0)
+      const code = error instanceof Error ? error.message : ''
+      const name = error instanceof Error ? error.name : ''
+      const messages = ru ? {
+        microphone_timeout: 'Браузер не ответил на запрос микрофона. Разрешите микрофон для этой страницы. Если встроенный браузер не показывает запрос, откройте http://localhost:3002 в Chrome или Safari.',
+        audio_blocked: 'Браузер не запустил аудио. Нажмите «Старт» ещё раз. Если ошибка повторяется, откройте http://localhost:3002 в Chrome или Safari.',
+        capture_unavailable: 'Не удалось запустить обработку микрофона. Обновите страницу и попробуйте снова.',
+        capture_no_frames: 'От микрофона не поступают аудиоданные. Проверьте выбранный микрофон и разрешения браузера.',
+        NotAllowedError: 'Нет разрешения на микрофон. Разрешите его для этой страницы и для браузера в настройках macOS.',
+        NotFoundError: 'Микрофон не найден. Подключите его и проверьте настройки звука.',
+      } : {
+        microphone_timeout: 'Microphone permission request timed out. Allow microphone access. If the embedded browser shows no prompt, open http://localhost:3002 in Chrome or Safari.',
+        audio_blocked: 'Browser audio did not start. Press Start again, or open http://localhost:3002 in Chrome or Safari.',
+        capture_unavailable: 'Could not start microphone processing. Reload the page and try again.',
+        capture_no_frames: 'No audio frames received. Check the microphone and browser permissions.',
+        NotAllowedError: 'Microphone access denied. Allow it for this page and for your browser in macOS settings.',
+        NotFoundError: 'No microphone found. Connect one and check sound settings.',
+      }
+      setNotice(messages[code as keyof typeof messages] ?? messages[name as keyof typeof messages] ?? (ru ? 'Не удалось продолжить. Проверьте соединение и нажмите «Старт».' : 'Could not continue. Check the connection and press Start.'))
       setPhase('error')
     }
     try {
       await microphone.start(async audio => {
         if (id !== epoch.current) return
         setNotice('')
+        setLevel(0)
         setPhase('processing')
         const controller = new AbortController()
         abort.current = controller
@@ -130,31 +177,30 @@ export default function AutoDialogue({ locale, onActiveChange }: { locale: Local
             listenAgain(id)
             return
           }
-          if (typeof payload.source !== 'string' || typeof payload.translation !== 'string' || typeof payload.audio !== 'string') throw new Error('invalid_reply')
+          if (typeof payload.source !== 'string' || typeof payload.translation !== 'string' || typeof payload.audioUrl !== 'string' || !payload.audioUrl.startsWith('/api/auto-dialogue/speech?token=')) throw new Error('invalid_reply')
           setTurns(previous => [...previous.slice(-9), payload as Turn])
-          const bytes = Uint8Array.from(atob(payload.audio), char => char.charCodeAt(0))
-          const buffer = await context.decodeAudioData(bytes.buffer)
-          if (id !== epoch.current) return
-          pending.current = buffer
+          pendingUrl.current = payload.audioUrl
           await play(id)
-        } catch { fail() } finally { clearTimeout(timeout) }
-      }, () => { if (id === epoch.current) setPhase('speaking') }, fail)
+        } catch (error) { fail(error) } finally { clearTimeout(timeout) }
+      }, () => { if (id === epoch.current) setPhase('speaking') }, fail, {
+        context, onLevel: value => { if (id === epoch.current) setLevel(value) },
+      })
       if (id === epoch.current) setPhase('listening')
-    } catch { fail() }
+    } catch (error) { fail(error) }
   }
 
   const phases: Record<Phase, string> = ru ? {
-    ready: 'Готов к диалогу', connecting: 'Подключаю микрофон…', listening: 'Слушаю обоих собеседников',
-    speaking: 'Слышу речь…', processing: 'Определяю язык и перевожу…', playing: 'Звучит перевод — дождитесь окончания',
+    ready: 'Готов к диалогу', connecting: 'Разрешите доступ к микрофону в браузере…', listening: 'Слушаю обоих собеседников',
+    speaking: 'Слышу речь…', processing: 'Определяю язык и перевожу…', buffering: 'Начинаю озвучивание…', playing: 'Звучит перевод — дождитесь окончания',
     blocked: 'Нажмите «Включить звук», чтобы прослушать перевод', error: 'Диалог остановлен',
   } : {
     ready: 'Ready', connecting: 'Connecting microphone…', listening: 'Listening to both speakers', speaking: 'Speech detected…',
-    processing: 'Detecting language and translating…', playing: 'Playing translation — please wait', blocked: 'Press Enable sound to hear the translation', error: 'Dialogue stopped',
+    processing: 'Detecting language and translating…', buffering: 'Starting speech…', playing: 'Playing translation — please wait', blocked: 'Press Enable sound to hear the translation', error: 'Dialogue stopped',
   }
 
   return <section className="rounded-2xl border border-primary-100 bg-white p-5 shadow-lg sm:p-6">
     <h1 className="text-xl font-bold">{ru ? 'Автодиалог' : 'Auto dialogue'}</h1>
-    <p className="mt-2 text-slate-600">{ru ? 'Выберите пару языков и нажмите «Начать». Говорите по очереди; пауза около секунды завершает реплику. После перевода можно отвечать без свопа.' : 'Choose two languages and press Start. Take turns; about a second of silence ends a phrase. Reply after the translation without swapping.'}</p>
+    <p className="mt-2 text-slate-600">{ru ? 'Выберите пару языков и нажмите «Старт». Дождитесь «Слушаю» и говорите по очереди; пауза около 0,65 секунды завершает реплику. После перевода и возврата к «Слушаю» можно отвечать без свопа. Предварительные фразы не нужны.' : 'Choose two languages and press Start. Wait for Listening, then take turns; about 0.65 seconds of silence ends a phrase. Reply when playback ends and Listening returns. No training phrases are needed.'}</p>
     <div className="mt-4 grid gap-3 sm:grid-cols-2">
       {[{ value: first, set: setFirst }, { value: second, set: setSecond }].map((item, index) => <label key={index} className="font-semibold">
         {ru ? `Язык ${index + 1}` : `Language ${index + 1}`}
@@ -164,6 +210,10 @@ export default function AutoDialogue({ locale, onActiveChange }: { locale: Local
       </label>)}
     </div>
     <p role="status" aria-live="polite" className="mt-4 rounded-xl bg-primary-50 p-3 font-semibold">{phases[phase]}</p>
+    {(phase === 'listening' || phase === 'speaking') && <label className="mt-3 block text-sm text-slate-600">
+      {ru ? 'Уровень микрофона — шкала должна двигаться при речи' : 'Microphone level — should move while you speak'}
+      <meter className="mt-1 block h-4 w-full" min={0} max={1} value={level} />
+    </label>}
     <div className="mt-4 flex flex-wrap gap-3">
       <button onClick={() => void start()} disabled={active || first === second} className="rounded-full bg-primary-700 px-5 py-3 font-semibold text-white disabled:opacity-50">{copy.start}</button>
       <button onClick={() => { cleanup(); setPhase('ready'); setNotice('') }} disabled={!active} className="rounded-full border px-5 py-3 disabled:opacity-50">{copy.end}</button>

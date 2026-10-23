@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { NextRequest } from 'next/server'
 import { POST } from './route'
 import { readSessionEmail } from '@/lib/session'
+import { speechFromToken } from '@/lib/dialogue-speech-token'
 
 vi.mock('@/lib/session', async () => {
   const { NextResponse } = await import('next/server')
@@ -17,6 +18,7 @@ function request(first = 'ru', second = 'en') {
 
 beforeEach(() => {
   vi.stubEnv('OPENAI_API_KEY', 'test-key')
+  vi.stubEnv('AUTH_SECRET', 'test-secret')
   vi.mocked(readSessionEmail).mockReturnValue('test@example.com')
 })
 afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs() })
@@ -41,19 +43,21 @@ describe('auto dialogue API', () => {
       expect(upstream).toHaveBeenCalledTimes(1)
     }
   })
-  it('routes an English answer to Russian, preserves text, and returns synthesized audio', async () => {
+  it('returns the translation and a speech URL without waiting for speech generation', async () => {
     const upstream = vi.fn()
       .mockResolvedValueOnce(Response.json({ text: 'Delivery is included.', language: 'english' }))
       .mockResolvedValueOnce(Response.json({ choices: [{ finish_reason: 'stop', message: { content: 'Доставка включена.' } }] }))
-      .mockResolvedValueOnce(new Response(new Uint8Array([1, 2, 3])))
     vi.stubGlobal('fetch', upstream)
     const response = await POST(request())
     expect(response.status).toBe(200)
-    expect(await response.json()).toMatchObject({ language: 'en', target: 'ru', source: 'Delivery is included.', translation: 'Доставка включена.', audio: 'AQID' })
+    const result = await response.json()
+    expect(result).toMatchObject({ language: 'en', target: 'ru', source: 'Delivery is included.', translation: 'Доставка включена.' })
+    const token = new URL(result.audioUrl, 'https://example.com').searchParams.get('token')!
+    expect(speechFromToken(token, 'test@example.com', 'test-secret')).toBe('Доставка включена.')
+    expect(upstream).toHaveBeenCalledTimes(2)
     const translation = JSON.parse(upstream.mock.calls[1][1].body)
     expect(translation.messages[0].content).toContain('into Русский')
     expect(translation.messages[1].content).toBe('Delivery is included.')
-    expect(JSON.parse(upstream.mock.calls[2][1].body).input).toBe('Доставка включена.')
   })
   it('does not speak a truncated translation and releases the request lock after failure', async () => {
     const upstream = vi.fn()

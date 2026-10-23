@@ -1,5 +1,14 @@
 import { encodeWav, SpeechBoundary } from './auto-dialogue'
 
+export async function audioDeadline<T>(promise: Promise<T>, ms: number, code: string): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined
+  try {
+    return await Promise.race([promise, new Promise<never>((_, reject) => {
+      timer = setTimeout(() => reject(new Error(code)), ms)
+    })])
+  } finally { if (timer) clearTimeout(timer) }
+}
+
 export class DialogueMicrophone {
   private generation = 0
   private context: AudioContext | null = null
@@ -10,23 +19,36 @@ export class DialogueMicrophone {
   private frames: Float32Array[] = []
   private sampleCount = 0
   private clock = 0
+  private ownsContext = false
+  private frameTimer: ReturnType<typeof setTimeout> | null = null
 
-  async start(onAudio: (audio: Blob) => void, onSpeaking: () => void, onLost: () => void): Promise<void> {
+  async start(onAudio: (audio: Blob) => void, onSpeaking: () => void, onLost: (error?: Error) => void,
+    options: { context?: AudioContext; onLevel?: (level: number) => void } = {}): Promise<void> {
     this.stop()
     const generation = this.generation
     const alive = () => generation === this.generation
-    const context = new AudioContext()
+    const context = options.context ?? new AudioContext()
     this.context = context
-    // Resume during the Start gesture, before asking for microphone access.
-    await context.resume()
-    if (!alive()) return
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: {
+    this.ownsContext = !options.context
+    // Request permission immediately. Some browsers leave resume() pending until
+    // capture is permitted; awaiting it here would prevent the permission prompt.
+    void context.resume().catch(() => undefined)
+    let waiting = true
+    const requested = navigator.mediaDevices.getUserMedia({ audio: {
       echoCancellation: true, noiseSuppression: true, autoGainControl: true,
     } })
+    void requested.then(stream => {
+      if (!waiting) stream.getTracks().forEach(track => track.stop())
+    }, () => undefined)
+    let stream: MediaStream
+    try { stream = await audioDeadline(requested, 15_000, 'microphone_timeout') }
+    catch (error) { waiting = false; throw error }
     if (!alive()) { stream.getTracks().forEach(track => track.stop()); return }
     this.stream = stream
     stream.getAudioTracks().forEach(track => { track.onended = () => { if (alive()) onLost() } })
-    await context.audioWorklet.addModule('/auto-dialogue-capture.js')
+    await audioDeadline(context.resume(), 5000, 'audio_blocked')
+    if (!alive()) return
+    await audioDeadline(context.audioWorklet.addModule('/auto-dialogue-capture.js'), 8000, 'capture_unavailable')
     if (!alive()) return
     const source = context.createMediaStreamSource(stream)
     const node = new AudioWorkletNode(context, 'dialogue-capture')
@@ -34,13 +56,19 @@ export class DialogueMicrophone {
     node.onprocessorerror = () => { if (alive()) onLost() }
     source.connect(node)
     node.connect(context.destination)
+    this.frameTimer = setTimeout(() => { if (alive()) onLost(new Error('capture_no_frames')) }, 4000)
+    let lastLevelAt = 0
     node.port.onmessage = ({ data }: MessageEvent<Float32Array>) => {
+      if (this.frameTimer) { clearTimeout(this.frameTimer); this.frameTimer = null }
       if (!alive() || !this.enabled) return
       const frame = data
       this.clock += frame.length / context.sampleRate * 1000
       let energy = 0
       for (const value of frame) energy += value * value
-      const state = this.boundary.update(Math.sqrt(energy / frame.length), this.clock)
+      const rms = Math.sqrt(energy / frame.length)
+      if (this.clock < lastLevelAt) lastLevelAt = 0
+      if (this.clock - lastLevelAt >= 100) { options.onLevel?.(Math.min(1, rms * 12)); lastLevelAt = this.clock }
+      const state = this.boundary.update(rms, this.clock)
       this.frames.push(frame)
       this.sampleCount += frame.length
       if (state === 'waiting') {
@@ -77,13 +105,16 @@ export class DialogueMicrophone {
 
   stop(): void {
     this.generation++
+    if (this.frameTimer) clearTimeout(this.frameTimer)
+    this.frameTimer = null
     this.pause()
     this.node?.disconnect()
     if (this.node) this.node.port.onmessage = null
     this.node = null
     this.stream?.getTracks().forEach(track => { track.onended = null; track.stop() })
     this.stream = null
-    void this.context?.close().catch(() => undefined)
+    if (this.ownsContext) void this.context?.close().catch(() => undefined)
     this.context = null
+    this.ownsContext = false
   }
 }

@@ -2,6 +2,7 @@ import { findTranslatorLanguage } from './realtime-translate'
 
 export const MAX_UTTERANCE_MS = 20_000
 export const MAX_AUDIO_BYTES = 6 * 1024 * 1024
+export const END_SILENCE_MS = 650
 
 export function dialogueTarget(source: string, first: string, second: string): string | null {
   if (first === second || !findTranslatorLanguage(first)?.outputCode || !findTranslatorLanguage(second)?.outputCode) return null
@@ -32,7 +33,7 @@ export class SpeechBoundary {
     }
     if (this.startedAt === null) return 'waiting'
     if (now - this.startedAt >= MAX_UTTERANCE_MS) return 'done'
-    if (now - this.lastVoiceAt >= 1000) {
+    if (now - this.lastVoiceAt >= END_SILENCE_MS) {
       if (this.voicedMs >= 250) return 'done'
       this.startedAt = null
       this.voicedMs = 0

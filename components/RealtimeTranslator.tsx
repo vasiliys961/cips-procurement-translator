@@ -124,7 +124,7 @@ function phaseClass(phase: TranslatePhase): string {
 
 export default function RealtimeTranslatorPanel({ locale }: { locale: Locale }) {
   const [mode, setMode] = useState<'manual' | 'auto'>('auto')
-  const [active, setActive] = useState(false)
+  const [, setActive] = useState(false)
   useEffect(() => {
     try {
       const saved = localStorage.getItem('translator-mode')
@@ -134,7 +134,8 @@ export default function RealtimeTranslatorPanel({ locale }: { locale: Locale }) 
   return <div>
     <div className="mb-4 flex gap-2" role="group" aria-label={locale === 'ru' ? 'Режим перевода' : 'Translation mode'}>
       {(['manual', 'auto'] as const).map(value => <button key={value} type="button"
-        disabled={active} aria-pressed={mode === value} onClick={() => {
+        aria-pressed={mode === value} onClick={() => {
+          setActive(false)
           setMode(value)
           try { localStorage.setItem('translator-mode', value) } catch { /* Optional preference. */ }
         }}

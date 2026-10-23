@@ -1,8 +1,9 @@
 import data from './negotiation-glossary.json'
+import { PROCUREMENT_LANGUAGES } from './coverage'
+export { PROCUREMENT_LANGUAGES } from './coverage'
 
 /** Preferred negotiation terminology, not legal definitions or certified translations. */
 export const NEGOTIATION_GLOSSARY = data.entries
-export const PROCUREMENT_LANGUAGES = data.languages
 
 export function procurementPairGlossary(first: string, second: string): string {
   const selected = [first, second].filter(code => PROCUREMENT_LANGUAGES.includes(code))

@@ -58,7 +58,8 @@
         "response_timeout": "Ответ модели истек. Начните снова.",
         "response_failed": "Перевод не удался. Начните снова.",
         "generic": "Не удалось продолжить диалог. Проверьте ваше соединение и попробуйте снова."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — закупочный глоссарий (11 языков)."
     }
   },
   "en": {
@@ -120,7 +121,8 @@
         "response_timeout": "Model response timed out. Start again.",
         "response_failed": "Translation failed. Start again.",
         "generic": "Could not continue the dialogue. Check your connection and try again."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — procurement glossary (11 languages)."
     }
   },
   "es": {
@@ -182,7 +184,8 @@
         "response_timeout": "La respuesta del modelo ha expirado. Comienza de nuevo.",
         "response_failed": "La traducción falló. Comienza de nuevo.",
         "generic": "No se pudo continuar el diálogo. Verifica tu conexión e inténtalo de nuevo."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — glosario de compras (11 idiomas)."
     }
   },
   "fr": {
@@ -244,7 +247,8 @@
         "response_timeout": "Le délai de réponse du modèle a expiré. Recommencez.",
         "response_failed": "La traduction a échoué. Recommencez.",
         "generic": "Impossible de continuer le dialogue. Vérifiez votre connexion et réessayez."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — glossaire des achats (11 langues)."
     }
   },
   "ar": {
@@ -306,7 +310,8 @@
         "response_timeout": "انتهت مهلة استجابة النموذج. ابدأ مرة أخرى.",
         "response_failed": "فشلت الترجمة. ابدأ مرة أخرى.",
         "generic": "تعذر متابعة الحوار. تحقق من اتصالك وحاول مرة أخرى."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — مسرد المشتريات (11 لغة)."
     }
   },
   "hi": {
@@ -368,7 +373,8 @@
         "response_timeout": "मॉडल प्रतिक्रिया समय समाप्त हो गया। फिर से शुरू करें।",
         "response_failed": "अनुवाद विफल। फिर से शुरू करें।",
         "generic": "संवाद जारी नहीं रखा जा सका। अपने कनेक्शन की जांच करें और फिर से प्रयास करें।"
-      }
+      },
+      "procurementGlossaryLegend": "◆ — खरीद शब्दावली (11 भाषाएँ)।"
     }
   },
   "pt-BR": {
@@ -430,7 +436,8 @@
         "response_timeout": "O tempo de resposta do modelo expirou. Comece novamente.",
         "response_failed": "A tradução falhou. Comece novamente.",
         "generic": "Não foi possível continuar o diálogo. Verifique sua conexão e tente novamente."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — glossário de compras (11 idiomas)."
     }
   },
   "id": {
@@ -492,7 +499,8 @@
         "response_timeout": "Respon model habis waktu. Mulai lagi.",
         "response_failed": "Penerjemahan gagal. Mulai lagi.",
         "generic": "Tidak dapat melanjutkan dialog. Periksa koneksi Anda dan coba lagi."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — glosarium pengadaan (11 bahasa)."
     }
   },
   "ms": {
@@ -554,7 +562,8 @@
         "response_timeout": "Tanggapan model tamat. Mulakan semula.",
         "response_failed": "Penterjemahan gagal. Mulakan semula.",
         "generic": "Tidak dapat meneruskan dialog. Semak sambungan anda dan cuba lagi."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — glosari perolehan (11 bahasa)."
     }
   },
   "tr": {
@@ -616,7 +625,8 @@
         "response_timeout": "Model yanıtı zaman aşımına uğradı. Yeniden başlayın.",
         "response_failed": "Çeviri başarısız oldu. Yeniden başlayın.",
         "generic": "Diyaloğa devam edilemedi. Bağlantınızı kontrol edin ve tekrar deneyin."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — satın alma sözlüğü (11 dil)."
     }
   },
   "zh-CN": {
@@ -678,7 +688,8 @@
         "response_timeout": "模型响应超时。请重新开始。",
         "response_failed": "翻译失败。请重新开始。",
         "generic": "无法继续对话。请检查您的连接并重试。"
-      }
+      },
+      "procurementGlossaryLegend": "◆ — 采购术语表（11 种语言）。"
     }
   },
   "bg": {
@@ -740,7 +751,8 @@
         "response_timeout": "Времето за отговор на модела изтече. Започнете отново.",
         "response_failed": "Преводът не успя. Започнете отново.",
         "generic": "Не можа да продължи диалога. Проверете връзката си и опитайте отново."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — речник за покупки (11 езика)."
     }
   },
   "hr": {
@@ -802,7 +814,8 @@
         "response_timeout": "Odgovor modela je istekla. Započnite ponovo.",
         "response_failed": "Prevođenje nije uspjelo. Započnite ponovo.",
         "generic": "Nije moguće nastaviti dijalog. Provjerite svoju vezu i pokušajte ponovo."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — pojmovnik nabave (11 jezika)."
     }
   },
   "cs": {
@@ -864,7 +877,8 @@
         "response_timeout": "Časový limit pro odpověď modelu vypršel. Začněte znovu.",
         "response_failed": "Překlad se nezdařil. Začněte znovu.",
         "generic": "Nepodařilo se pokračovat v dialogu. Zkontrolujte své připojení a zkuste to znovu."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — nákupní slovník (11 jazyků)."
     }
   },
   "da": {
@@ -926,7 +940,8 @@
         "response_timeout": "Modelens svar timed out. Start igen.",
         "response_failed": "Oversættelse mislykkedes. Start igen.",
         "generic": "Kunne ikke fortsætte dialogen. Tjek din forbindelse og prøv igen."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — indkøbsordliste (11 sprog)."
     }
   },
   "nl": {
@@ -988,7 +1003,8 @@
         "response_timeout": "Modelreactie is verlopen. Begin opnieuw.",
         "response_failed": "Vertaling mislukt. Begin opnieuw.",
         "generic": "Kon de dialoog niet voortzetten. Controleer uw verbinding en probeer het opnieuw."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — inkoopwoordenlijst (11 talen)."
     }
   },
   "et": {
@@ -1050,7 +1066,8 @@
         "response_timeout": "Mudeli vastus aegus. Alustage uuesti.",
         "response_failed": "Tõlge ebaõnnestus. Alustage uuesti.",
         "generic": "Dialooge ei saanud jätkata. Kontrollige oma ühendust ja proovige uuesti."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — ostuterminoloogia sõnastik (11 keelt)."
     }
   },
   "fi": {
@@ -1112,7 +1129,8 @@
         "response_timeout": "Mallin vastaus aikakatkaisu. Aloita uudelleen.",
         "response_failed": "Käännös epäonnistui. Aloita uudelleen.",
         "generic": "Keskustelua ei voitu jatkaa. Tarkista yhteytesi ja yritä uudelleen."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — hankintasanasto (11 kieltä)."
     }
   },
   "de": {
@@ -1174,7 +1192,8 @@
         "response_timeout": "Antwort des Modells ist abgelaufen. Starten Sie erneut.",
         "response_failed": "Übersetzung fehlgeschlagen. Starten Sie erneut.",
         "generic": "Konnte den Dialog nicht fortsetzen. Überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — Beschaffungsglossar (11 Sprachen)."
     }
   },
   "el": {
@@ -1236,7 +1255,8 @@
         "response_timeout": "Η απάντηση του μοντέλου έληξε. Ξεκινήστε ξανά.",
         "response_failed": "Η μετάφραση απέτυχε. Ξεκινήστε ξανά.",
         "generic": "Δεν ήταν δυνατή η συνέχιση του διαλόγου. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — γλωσσάρι προμηθειών (11 γλώσσες)."
     }
   },
   "hu": {
@@ -1298,7 +1318,8 @@
         "response_timeout": "A modell válasza időtúllépett. Kezdje újra.",
         "response_failed": "A fordítás nem sikerült. Kezdje újra.",
         "generic": "Nem lehetett folytatni a párbeszédet. Ellenőrizze a kapcsolatát és próbálja újra."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — beszerzési szójegyzék (11 nyelv)."
     }
   },
   "ga": {
@@ -1360,7 +1381,8 @@
         "response_timeout": "Tháinig deireadh le freagra an mhúnla. Tosaigh arís.",
         "response_failed": "Níor éirigh le haistriúchán. Tosaigh arís.",
         "generic": "Níor éirigh le leanúint ar aghaidh leis an dialóg. Seiceáil do nasc agus déan iarracht arís."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — gluais soláthair (11 teanga)."
     }
   },
   "it": {
@@ -1422,7 +1444,8 @@
         "response_timeout": "Risposta del modello scaduta. Riprova.",
         "response_failed": "Traduzione fallita. Riprova.",
         "generic": "Impossibile continuare il dialogo. Controlla la tua connessione e riprova."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — glossario degli acquisti (11 lingue)."
     }
   },
   "lv": {
@@ -1484,7 +1507,8 @@
         "response_timeout": "Modeļa atbilde ir beigusies. Sāciet vēlreiz.",
         "response_failed": "Tulkošana neizdevās. Sāciet vēlreiz.",
         "generic": "Neizdevās turpināt dialogu. Pārbaudiet savu savienojumu un mēģiniet vēlreiz."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — iepirkumu glosārijs (11 valodas)."
     }
   },
   "lt": {
@@ -1546,7 +1570,8 @@
         "response_timeout": "Modelio atsakymas pasibaigė. Pradėkite iš naujo.",
         "response_failed": "Vertimas nepavyko. Pradėkite iš naujo.",
         "generic": "Nepavyko tęsti dialogo. Patikrinkite savo ryšį ir bandykite dar kartą."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — pirkimų žodynėlis (11 kalbų)."
     }
   },
   "mt": {
@@ -1608,7 +1633,8 @@
         "response_timeout": "Il-mudell għadda l-ħin ta' risposta. Ibda mill-ġdid.",
         "response_failed": "It-traduzzjoni falliet. Ibda mill-ġdid.",
         "generic": "Ma setax ikompli d-djalogu. Iċċekkja l-konnessjoni tiegħek u prova mill-ġdid."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — glossarju tal-akkwist (11-il lingwa)."
     }
   },
   "pl": {
@@ -1670,7 +1696,8 @@
         "response_timeout": "Czas odpowiedzi modelu wygasł. Rozpocznij ponownie.",
         "response_failed": "Tłumaczenie nie powiodło się. Rozpocznij ponownie.",
         "generic": "Nie można kontynuować dialogu. Sprawdź swoje połączenie i spróbuj ponownie."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — słownik zakupowy (11 języków)."
     }
   },
   "pt-PT": {
@@ -1732,7 +1759,8 @@
         "response_timeout": "O tempo de resposta do modelo expirou. Comece novamente.",
         "response_failed": "A tradução falhou. Comece novamente.",
         "generic": "Não foi possível continuar o diálogo. Verifique a sua ligação e tente novamente."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — glossário de compras (11 línguas)."
     }
   },
   "ro": {
@@ -1794,7 +1822,8 @@
         "response_timeout": "Răspunsul modelului a expirat. Începe din nou.",
         "response_failed": "Traducerea a eșuat. Începe din nou.",
         "generic": "Nu s-a putut continua dialogul. Verifică conexiunea și încearcă din nou."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — glosar de achiziții (11 limbi)."
     }
   },
   "sk": {
@@ -1856,7 +1885,8 @@
         "response_timeout": "Časový limit odpovede modelu vypršal. Začnite znova.",
         "response_failed": "Preklad zlyhal. Začnite znova.",
         "generic": "Nepodarilo sa pokračovať v dialógu. Skontrolujte svoje pripojenie a skúste to znova."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — nákupný slovník (11 jazykov)."
     }
   },
   "sl": {
@@ -1918,7 +1948,8 @@
         "response_timeout": "Čas za odgovor modela je potekel. Začnite znova.",
         "response_failed": "Prevajanje ni uspelo. Začnite znova.",
         "generic": "Pogovora ni bilo mogoče nadaljevati. Preverite svojo povezavo in poskusite znova."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — nabavni glosar (11 jezikov)."
     }
   },
   "sv": {
@@ -1980,7 +2011,8 @@
         "response_timeout": "Modellens svar tidsgräns. Starta om.",
         "response_failed": "Översättning misslyckades. Starta om.",
         "generic": "Kunde inte fortsätta dialogen. Kontrollera din anslutning och försök igen."
-      }
+      },
+      "procurementGlossaryLegend": "◆ — inköpsordlista (11 språk)."
     }
   }
 }

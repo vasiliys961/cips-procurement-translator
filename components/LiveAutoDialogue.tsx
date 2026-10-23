@@ -8,6 +8,7 @@ import { LIVE_DIALOGUE_LANGUAGES, findLiveLanguage, liveLanguageLabel, validLive
 import { DialogueRealtime, type LivePhase, type LiveTurn } from '@/lib/dialogue-realtime'
 import { assessProcurementFidelity, type ProcurementFidelityReport } from '@/lib/procurement-translate/fidelity'
 import { fidelityDisplayLines, fidelityLineText } from '@/lib/procurement-translate/fidelity-notice'
+import { hasProcurementGlossary } from '@/lib/procurement-translate/coverage'
 
 type Phase = LivePhase | 'ready' | 'error'
 type Turn = LiveTurn & { fidelity?: ProcurementFidelityReport }
@@ -86,14 +87,15 @@ export default function LiveAutoDialogue({ locale, onActiveChange }: { locale: L
     <p className="mt-2 text-slate-600">{ui.live.description}</p>
     <div className="mt-4 grid gap-3 sm:grid-cols-2">{[first, second].map((value, i) => <label key={i} className="font-semibold">
       {formatUi(ui.live.languageLabel, { number: i + 1 })}
-      <select value={value} onChange={event => changePair(i, event.target.value)} className="mt-1 block w-full rounded-xl border p-3">
+      <select value={value} aria-describedby="procurement-glossary-legend" onChange={event => changePair(i, event.target.value)} className="mt-1 block w-full rounded-xl border p-3">
         {LIVE_DIALOGUE_LANGUAGES.map(language => {
           const label = liveLanguageLabel(language.code, locale)
           const native = label.toLocaleLowerCase() === language.nativeName.toLocaleLowerCase() ? '' : ` (${language.nativeName})`
-          return <option key={language.code} value={language.code}>{label}{native}{language.experimental ? ` — ${ui.common.experimental}` : ''}</option>
+          return <option key={language.code} value={language.code}>{label}{native}{hasProcurementGlossary(language.code) ? ' ◆' : ''}{language.experimental ? ` — ${ui.common.experimental}` : ''}</option>
         })}
       </select>
     </label>)}</div>
+    <p id="procurement-glossary-legend" className="mt-3 rounded-lg bg-teal-50 px-3 py-2 text-sm font-semibold text-teal-900">{ui.live.procurementGlossaryLegend}</p>
     {experimental.length > 0 && <p role="note" className="mt-3 rounded-lg bg-amber-50 p-3 text-sm text-amber-950">{formatUi(ui.live.experimentalWarning, { languages: experimental.map(code => liveLanguageLabel(code, locale)).join(', ') })}</p>}
     <p role="status" aria-live="polite" className="mt-4 rounded-xl bg-primary-50 p-3 font-semibold">{blocked ? ui.live.soundBlocked : ui.live.phase[phase]}</p>
     <div className="mt-4 flex flex-wrap gap-3">

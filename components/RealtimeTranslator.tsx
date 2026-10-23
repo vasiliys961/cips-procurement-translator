@@ -7,6 +7,7 @@ import { partyLabels, translatorUi, type TranslatorUi } from '@/lib/i18n/transla
 import { REALTIME_TRANSLATION_CREDITS_PER_MINUTE } from '@/lib/cost-calculator'
 import { recordUsageCost } from '@/lib/simple-logger'
 import PhoneCall from '@/components/PhoneCall'
+import AutoDialogue from '@/components/AutoDialogue'
 import LanguageDetectPanel from '@/components/LanguageDetectPanel'
 import { fidelityDisplayLines, fidelityLineText } from '@/lib/procurement-translate/fidelity-notice'
 import { TurnGuard } from '@/lib/realtime-turn'
@@ -122,6 +123,21 @@ function phaseClass(phase: TranslatePhase): string {
 }
 
 export default function RealtimeTranslatorPanel({ locale }: { locale: Locale }) {
+  const [mode, setMode] = useState<'manual' | 'auto'>('manual')
+  const [active, setActive] = useState(false)
+  return <div>
+    <div className="mb-4 flex gap-2" role="group" aria-label={locale === 'ru' ? 'Режим перевода' : 'Translation mode'}>
+      {(['manual', 'auto'] as const).map(value => <button key={value} type="button"
+        disabled={active} aria-pressed={mode === value} onClick={() => setMode(value)}
+        className={`rounded-full border px-4 py-2 font-semibold disabled:opacity-60 ${mode === value ? 'bg-primary-700 text-white' : 'bg-white text-slate-800'}`}>
+        {value === 'manual' ? (locale === 'ru' ? 'Ручной режим' : 'Manual mode') : (locale === 'ru' ? 'Автодиалог' : 'Auto dialogue')}
+      </button>)}
+    </div>
+    {mode === 'auto' ? <AutoDialogue locale={locale} onActiveChange={setActive} /> : <ManualTranslatorPanel locale={locale} onActiveChange={setActive} />}
+  </div>
+}
+
+function ManualTranslatorPanel({ locale, onActiveChange }: { locale: Locale; onActiveChange: (active: boolean) => void }) {
   const copy = translatorUi[locale]
   const clientRef = useRef<RealtimeTranslator | null>(null)
   if (!clientRef.current) clientRef.current = new RealtimeTranslator()
@@ -170,6 +186,7 @@ export default function RealtimeTranslatorPanel({ locale }: { locale: Locale }) 
   const heardOnly = useMemo(() => inputOnlyLanguages(), [])
 
   const active = phase === 'connecting' || phase === 'listening' || phase === 'translating'
+  useEffect(() => { onActiveChange(active || callSketch) }, [active, callSketch, onActiveChange])
   const sameLanguage = buyerLanguage === supplierLanguage
   const supplierCanSpeak = Boolean(supplier?.outputCode)
   const buyerCanSpeak = Boolean(buyer?.outputCode)

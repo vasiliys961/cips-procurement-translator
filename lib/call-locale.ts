@@ -1,11 +1,11 @@
-import type { Locale } from './i18n/config'
+import { isLocale, type Locale } from './i18n/config'
 
 const SPEECH_TO_UI: Record<string, Locale> = {
   ru: 'ru',
   en: 'en',
   es: 'es',
   fr: 'fr',
-  pt: 'pt-BR',
+  pt: 'pt-PT',
   zh: 'zh-CN',
   hi: 'hi',
   id: 'id',
@@ -16,5 +16,5 @@ const SPEECH_TO_UI: Record<string, Locale> = {
 }
 
 export function localeForSpeech(code: string): Locale {
-  return SPEECH_TO_UI[code] ?? 'en'
+  return SPEECH_TO_UI[code] ?? (isLocale(code) ? code : code === 'pt' ? 'pt-PT' : 'en')
 }

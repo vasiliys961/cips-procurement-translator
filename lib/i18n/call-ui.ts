@@ -1,4 +1,5 @@
-import type { Locale } from './config'
+import { SUPPORTED_LOCALES, type Locale, type LegacyLocale } from './config'
+import additionalUi from './generated/additional-ui.json'
 
 export type CallUi = {
   call: string
@@ -362,7 +363,7 @@ const zh: CallUi = {
   hangUp: '结束通话',
 }
 
-export const callUi: Record<Locale, CallUi> = {
+const baseCallUi: Record<LegacyLocale, CallUi> = {
   ru,
   en,
   es,
@@ -375,3 +376,8 @@ export const callUi: Record<Locale, CallUi> = {
   tr,
   'zh-CN': zh,
 }
+
+const extra = additionalUi as unknown as Record<string, { call: CallUi }>
+export const callUi: Record<Locale, CallUi> = Object.fromEntries(
+  SUPPORTED_LOCALES.map(locale => [locale, baseCallUi[locale as LegacyLocale] ?? extra[locale].call])
+) as Record<Locale, CallUi>

@@ -1,7 +1,8 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import type { Locale } from '@/lib/i18n/config'
+import { SUPPORTED_LOCALES, type Locale, type LegacyLocale } from '@/lib/i18n/config'
+import additionalUi from '@/lib/i18n/generated/additional-ui.json'
 
 type Probe = {
   text: string
@@ -12,7 +13,7 @@ type Probe = {
 
 type Role = 'buyer' | 'supplier'
 
-const COPY: Record<Locale, {
+const BASE_COPY: Record<LegacyLocale, {
   title: string
   hint: string
   buyer: string
@@ -181,6 +182,12 @@ const COPY: Record<Locale, {
     same: 'Обе фразы звучат на одном языке. Скажите их снова на двух разных языках.',
   },
 }
+
+type DetectorUi = (typeof BASE_COPY)['en']
+const extra = additionalUi as unknown as Record<string, { detector: DetectorUi }>
+const COPY: Record<Locale, DetectorUi> = Object.fromEntries(
+  SUPPORTED_LOCALES.map(locale => [locale, BASE_COPY[locale as LegacyLocale] ?? extra[locale].detector])
+) as Record<Locale, DetectorUi>
 
 async function recordPhrase(stopSignal: AbortSignal): Promise<Blob> {
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true })

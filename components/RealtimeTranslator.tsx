@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import type { Locale } from '@/lib/i18n/config'
+import { appUi } from '@/lib/i18n/app-ui'
 import { callUi } from '@/lib/i18n/call-ui'
 import { partyLabels, translatorUi, type TranslatorUi } from '@/lib/i18n/translator-ui'
 import { REALTIME_TRANSLATION_CREDITS_PER_MINUTE } from '@/lib/cost-calculator'
@@ -132,7 +133,7 @@ export default function RealtimeTranslatorPanel({ locale }: { locale: Locale }) 
     } catch { /* Storage may be disabled by the browser. */ }
   }, [])
   return <div>
-    <div className="mb-4 flex gap-2" role="group" aria-label={locale === 'ru' ? 'Режим перевода' : 'Translation mode'}>
+    <div className="mb-4 flex gap-2" role="group" aria-label={appUi[locale].common.translationMode}>
       {(['manual', 'auto'] as const).map(value => <button key={value} type="button"
         aria-pressed={mode === value} onClick={() => {
           setActive(false)
@@ -140,7 +141,7 @@ export default function RealtimeTranslatorPanel({ locale }: { locale: Locale }) 
           try { localStorage.setItem('translator-mode', value) } catch { /* Optional preference. */ }
         }}
         className={`rounded-full border px-4 py-2 font-semibold disabled:opacity-60 ${mode === value ? 'bg-primary-700 text-white' : 'bg-white text-slate-800'}`}>
-        {value === 'manual' ? (locale === 'ru' ? 'Ручной режим' : 'Manual mode') : (locale === 'ru' ? 'Автодиалог' : 'Auto dialogue')}
+        {value === 'manual' ? appUi[locale].common.manualMode : appUi[locale].common.autoMode}
       </button>)}
     </div>
     {mode === 'auto' ? <AutoDialogue locale={locale} onActiveChange={setActive} /> : <ManualTranslatorPanel locale={locale} onActiveChange={setActive} />}

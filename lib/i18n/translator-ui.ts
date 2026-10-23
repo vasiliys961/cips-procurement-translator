@@ -1,4 +1,6 @@
-import type { Locale } from './config'
+import { SUPPORTED_LOCALES, type Locale, type LegacyLocale } from './config'
+import additionalUi from './generated/additional-ui.json'
+import { appUi } from './app-ui'
 import type { FidelityCode } from '@/lib/procurement-translate/fidelity'
 import type { TranslatePhase, TranslatorErrorCode } from '@/lib/realtime-translate'
 
@@ -1024,7 +1026,7 @@ const ru: TranslatorUi = {
   },
 }
 
-export const partyLabels: Record<Locale, { you: string; other: string; phraseDone: string }> = {
+const basePartyLabels: Record<LegacyLocale, { you: string; other: string; phraseDone: string }> = {
   ru: { you: 'Вы', other: 'Он/она', phraseDone: 'Фраза переведена.' },
   en: { you: 'You', other: 'They', phraseDone: 'Phrase finished. You can continue.' },
   es: { you: 'Usted', other: 'Él/ella', phraseDone: 'Frase terminada. Puede continuar.' },
@@ -1038,7 +1040,7 @@ export const partyLabels: Record<Locale, { you: string; other: string; phraseDon
   'zh-CN': { you: '您', other: '他/她', phraseDone: '这句话结束了。可以继续。' },
 }
 
-export const translatorUi: Record<Locale, TranslatorUi> = {
+const baseTranslatorUi: Record<LegacyLocale, TranslatorUi> = {
   ru,
   en,
   es,
@@ -1051,3 +1053,15 @@ export const translatorUi: Record<Locale, TranslatorUi> = {
   tr,
   'zh-CN': zh,
 }
+
+
+const extra = additionalUi as unknown as Record<string, { translator: TranslatorUi }>
+export const translatorUi: Record<Locale, TranslatorUi> = Object.fromEntries(
+  SUPPORTED_LOCALES.map(locale => [locale, baseTranslatorUi[locale as LegacyLocale] ?? extra[locale].translator])
+) as Record<Locale, TranslatorUi>
+
+export const partyLabels: Record<Locale, { you: string; other: string; phraseDone: string }> = Object.fromEntries(
+  SUPPORTED_LOCALES.map(locale => [locale, basePartyLabels[locale as LegacyLocale] ?? {
+    you: appUi[locale].common.you, other: appUi[locale].common.other, phraseDone: appUi[locale].common.phraseDone,
+  }])
+) as Record<Locale, { you: string; other: string; phraseDone: string }>

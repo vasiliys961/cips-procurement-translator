@@ -123,12 +123,21 @@ function phaseClass(phase: TranslatePhase): string {
 }
 
 export default function RealtimeTranslatorPanel({ locale }: { locale: Locale }) {
-  const [mode, setMode] = useState<'manual' | 'auto'>('manual')
+  const [mode, setMode] = useState<'manual' | 'auto'>('auto')
   const [active, setActive] = useState(false)
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('translator-mode')
+      if (saved === 'manual' || saved === 'auto') setMode(saved)
+    } catch { /* Storage may be disabled by the browser. */ }
+  }, [])
   return <div>
     <div className="mb-4 flex gap-2" role="group" aria-label={locale === 'ru' ? 'Режим перевода' : 'Translation mode'}>
       {(['manual', 'auto'] as const).map(value => <button key={value} type="button"
-        disabled={active} aria-pressed={mode === value} onClick={() => setMode(value)}
+        disabled={active} aria-pressed={mode === value} onClick={() => {
+          setMode(value)
+          try { localStorage.setItem('translator-mode', value) } catch { /* Optional preference. */ }
+        }}
         className={`rounded-full border px-4 py-2 font-semibold disabled:opacity-60 ${mode === value ? 'bg-primary-700 text-white' : 'bg-white text-slate-800'}`}>
         {value === 'manual' ? (locale === 'ru' ? 'Ручной режим' : 'Manual mode') : (locale === 'ru' ? 'Автодиалог' : 'Auto dialogue')}
       </button>)}

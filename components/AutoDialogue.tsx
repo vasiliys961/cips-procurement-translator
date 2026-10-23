@@ -11,7 +11,9 @@ import { fidelityDisplayLines, fidelityLineText } from '@/lib/procurement-transl
 type Phase = 'ready' | 'connecting' | 'listening' | 'speaking' | 'processing' | 'buffering' | 'playing' | 'blocked' | 'error'
 type Turn = { source: string; translation: string; language: string; target: string; fidelity: ProcurementFidelityReport }
 
-export default function AutoDialogue({ locale, onActiveChange }: { locale: Locale; onActiveChange: (active: boolean) => void }) {
+export { default } from './LiveAutoDialogue'
+
+export function SegmentedAutoDialogue({ locale, onActiveChange }: { locale: Locale; onActiveChange: (active: boolean) => void }) {
   const ru = locale === 'ru'
   const copy = translatorUi[locale]
   const [first, setFirst] = useState('ru')

@@ -22,7 +22,7 @@ export type GlossaryEntry = {
 
 export const PROCUREMENT_GLOSSARY = {
   instruments: [
-    { id: 'letter-of-credit', forms: ['аккредитив', 'letter of credit', 'lettre de credit', 'carta de credito', 'carta di credito', 'carta de credito', '信用证', 'lc'] },
+    { id: 'letter-of-credit', forms: ['аккредитив', 'letter of credit', 'lettre de credit', 'carta de credito', 'lettera di credito', 'credito documentario', '信用证', 'lc'] },
     { id: 'bank-guarantee', forms: ['банковская гарантия', 'банковской гарантии', 'банковскую гарантию', 'bank guarantee', 'garantie bancaire', 'garantia bancaria', '银行保函'] },
     { id: 'performance-bond', forms: ['гарантия исполнения', 'гарантии исполнения', 'performance bond', 'performance guarantee', 'garantia de cumplimiento', '履约保函'] },
     { id: 'retention', forms: ['удержани', 'retention', 'retention money', 'retenue de garantie', 'retencion', '保留金'] },

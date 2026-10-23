@@ -1,0 +1,156 @@
+[
+  {
+    "first": "de",
+    "second": "en",
+    "source": "Bitte senden Sie uns ein Preisangebot. Die Mindestbestellmenge beträgt fünfhundert Stück, und die Lieferzeit beträgt vierzehn Kalendertage ab Bestellung.",
+    "inputMode": "audio",
+    "concepts": "quotation,MOQ,lead-time"
+  },
+  {
+    "first": "fr",
+    "second": "en",
+    "source": "Le paiement se fera par crédit documentaire, et non par garantie bancaire. L’acompte de vingt pour cent n’est pas inclus dans le prix unitaire.",
+    "inputMode": "audio",
+    "concepts": "letter-of-credit,bank-guarantee,advance-payment,unit-price,negation"
+  },
+  {
+    "first": "es",
+    "second": "en",
+    "source": "La orden de compra no es una solicitud de compra. La entrega parcial requiere la aprobación del comprador.",
+    "inputMode": "audio",
+    "concepts": "purchase-order,purchase-requisition,partial-delivery,buyer"
+  },
+  {
+    "first": "it",
+    "second": "en",
+    "source": "Il fornitore deve presentare la fattura e la polizza di carico prima del pagamento. La garanzia contrattuale è di dodici mesi.",
+    "inputMode": "audio",
+    "concepts": "supplier,invoice,bill-of-lading,warranty"
+  },
+  {
+    "first": "pt",
+    "second": "en",
+    "source": "O preço não inclui IVA. Precisamos de um acordo-quadro e de uma especificação técnica antes de emitir a encomenda.",
+    "inputMode": "audio",
+    "concepts": "vat,framework-agreement,specification,negation"
+  },
+  {
+    "first": "pl",
+    "second": "en",
+    "source": "Nie akceptujemy niezgodności. Odbiór towaru nastąpi po sprawdzeniu dokumentu dostawy. Kara umowna za opóźnienie dostawy wynosi jeden procent tygodniowo.",
+    "inputMode": "audio",
+    "concepts": "nonconformity,acceptance,delivery-note,penalty"
+  },
+  {
+    "first": "nl",
+    "second": "en",
+    "source": "Beoordeel de totale eigendomskosten, niet alleen de eenheidsprijs. De leverancier moet een veiligheidsvoorraad aanhouden.",
+    "inputMode": "audio",
+    "concepts": "tco,unit-price,supplier,safety-stock"
+  },
+  {
+    "first": "ro",
+    "second": "en",
+    "source": "Solicităm o garanție de bună execuție de cinci la sută. Subcontractantul trebuie să respecte acordul privind nivelul serviciilor.",
+    "inputMode": "audio",
+    "concepts": "performance-security,subcontractor,sla"
+  },
+  {
+    "first": "cs",
+    "second": "en",
+    "source": "Nejprve dokončíme kvalifikaci dodavatelů. Zadavatel požaduje cenovou nabídku a nesouhlasí s platbou předem.",
+    "inputMode": "audio",
+    "concepts": "supplier-qualification,contracting-authority,quotation,advance-payment,negation"
+  },
+  {
+    "first": "ru",
+    "second": "en",
+    "source": "Гарантийное удержание составляет пять процентов. Запрос котировок RFQ не заменяет запрос предложений RFP. Не раскрывайте LC без контекста.",
+    "inputMode": "audio",
+    "concepts": "retention,RFQ,RFP,LC ambiguity"
+  },
+  {
+    "first": "en",
+    "second": "de",
+    "source": "The delivery lead time is fourteen calendar days from the purchase order, not the delivery date.",
+    "inputMode": "text",
+    "concepts": "outward"
+  },
+  {
+    "first": "en",
+    "second": "fr",
+    "source": "Payment is by documentary letter of credit, not by bank guarantee.",
+    "inputMode": "text",
+    "concepts": "outward"
+  },
+  {
+    "first": "en",
+    "second": "es",
+    "source": "The minimum order quantity is five hundred units. The unit price excludes VAT.",
+    "inputMode": "text",
+    "concepts": "outward"
+  },
+  {
+    "first": "en",
+    "second": "it",
+    "source": "Please send the invoice and the bill of lading. A documentary letter of credit is required, not a credit card.",
+    "inputMode": "text",
+    "concepts": "outward"
+  },
+  {
+    "first": "en",
+    "second": "pt",
+    "source": "The framework agreement does not permit partial delivery without the buyer’s approval.",
+    "inputMode": "text",
+    "concepts": "outward"
+  },
+  {
+    "first": "en",
+    "second": "pl",
+    "source": "The supplier must provide performance security of five percent. Do not assume it is a bank guarantee.",
+    "inputMode": "text",
+    "concepts": "outward"
+  },
+  {
+    "first": "en",
+    "second": "nl",
+    "source": "The retention money is five percent. Compare the total cost of ownership, not just the purchase price.",
+    "inputMode": "text",
+    "concepts": "outward"
+  },
+  {
+    "first": "en",
+    "second": "ro",
+    "source": "The subcontractor must comply with the service level agreement and maintain safety stock.",
+    "inputMode": "text",
+    "concepts": "outward"
+  },
+  {
+    "first": "en",
+    "second": "cs",
+    "source": "The goods fail the technical specification. We cannot complete acceptance before inspection.",
+    "inputMode": "text",
+    "concepts": "outward"
+  },
+  {
+    "first": "en",
+    "second": "ru",
+    "source": "Delivery is DDP Berlin, Incoterms 2020. Do not change it to DAP. The price excludes VAT.",
+    "inputMode": "text",
+    "concepts": "outward"
+  },
+  {
+    "first": "ru",
+    "second": "de",
+    "source": "Поставка DDP Берлин, Incoterms 2020. Цена не включает НДС. Оплата через четырнадцать дней после приёмки товара.",
+    "inputMode": "audio",
+    "concepts": "DDP,VAT,payment,acceptance"
+  },
+  {
+    "first": "de",
+    "second": "ru",
+    "source": "Die Lieferzeit beträgt vierzehn Kalendertage ab Bestellung. Die Zahlung erfolgt per Dokumentenakkreditiv, nicht per Bankgarantie.",
+    "inputMode": "audio",
+    "concepts": "lead-time,letter-of-credit,bank-guarantee"
+  }
+]

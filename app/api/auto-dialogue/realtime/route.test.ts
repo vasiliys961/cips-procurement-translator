@@ -30,3 +30,14 @@ it('rejects unauthenticated users and invalid language pairs before creating a s
   expect((await POST(request({ first: 'ru', second: 'ru', sdp: 'v=offer' }))).status).toBe(400)
   expect(upstream).not.toHaveBeenCalled()
 })
+
+it('sends the selected procurement terminology to the speech model, not client supplied terms', async () => {
+  const upstream = vi.mocked(openaiSdpCall).mockClear().mockResolvedValue({ status: 201, body: 'v=answer' })
+  const response = await POST(request({ first: 'de', second: 'pl', sdp: 'v=offer', glossary: 'invented-payment-instrument' }))
+  expect(response.status).toBe(200)
+  const session = JSON.parse(String(upstream.mock.calls[0][0].get('session')))
+  expect(session.instructions).toContain('de=Dokumentenakkreditiv <=> pl=akredytywa dokumentowa')
+  expect(session.instructions).not.toContain('ru=')
+  expect(session.instructions).not.toContain('fr=')
+  expect(session.instructions).not.toContain('invented-payment-instrument')
+})

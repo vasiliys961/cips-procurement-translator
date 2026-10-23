@@ -1,0 +1,596 @@
+{
+  "version": 1,
+  "languages": [
+    "en",
+    "ru",
+    "de",
+    "fr",
+    "es",
+    "it",
+    "pt",
+    "pl",
+    "nl",
+    "ro",
+    "cs"
+  ],
+  "entries": [
+    {
+      "id": "buyer",
+      "terms": {
+        "en": "buyer",
+        "ru": "покупатель",
+        "de": "Käufer",
+        "fr": "acheteur",
+        "es": "comprador",
+        "it": "acquirente",
+        "pt": "comprador",
+        "pl": "kupujący",
+        "nl": "koper",
+        "ro": "cumpărător",
+        "cs": "kupující"
+      }
+    },
+    {
+      "id": "supplier",
+      "terms": {
+        "en": "supplier",
+        "ru": "поставщик",
+        "de": "Lieferant",
+        "fr": "fournisseur",
+        "es": "proveedor",
+        "it": "fornitore",
+        "pt": "fornecedor",
+        "pl": "dostawca",
+        "nl": "leverancier",
+        "ro": "furnizor",
+        "cs": "dodavatel"
+      }
+    },
+    {
+      "id": "procurement",
+      "terms": {
+        "en": "procurement",
+        "ru": "закупки",
+        "de": "Beschaffung",
+        "fr": "achats",
+        "es": "compras",
+        "it": "approvvigionamento",
+        "pt": "compras",
+        "pl": "zakupy",
+        "nl": "inkoop",
+        "ro": "achiziții",
+        "cs": "nákup"
+      },
+      "note": "Purchasing/sourcing context; do not automatically turn a private purchase into public procurement."
+    },
+    {
+      "id": "purchase-order",
+      "terms": {
+        "en": "purchase order (PO)",
+        "ru": "заказ на поставку (PO)",
+        "de": "Bestellung (PO)",
+        "fr": "bon de commande (PO)",
+        "es": "orden de compra (PO)",
+        "it": "ordine di acquisto (PO)",
+        "pt": "ordem de compra (PO)",
+        "pl": "zamówienie zakupu (PO)",
+        "nl": "inkooporder (PO)",
+        "ro": "comandă de achiziție (PO)",
+        "cs": "objednávka (PO)"
+      },
+      "note": "Order issued to supplier; distinct from an internal purchase requisition and an invoice."
+    },
+    {
+      "id": "purchase-requisition",
+      "terms": {
+        "en": "purchase requisition",
+        "ru": "заявка на закупку",
+        "de": "Bestellanforderung",
+        "fr": "demande d'achat",
+        "es": "solicitud de compra",
+        "it": "richiesta di acquisto",
+        "pt": "requisição de compra",
+        "pl": "zapotrzebowanie zakupu",
+        "nl": "inkoopaanvraag",
+        "ro": "referat de necesitate",
+        "cs": "požadavek na nákup"
+      },
+      "note": "Internal request to buy; not an order already placed with a supplier."
+    },
+    {
+      "id": "rfq",
+      "terms": {
+        "en": "request for quotation (RFQ)",
+        "ru": "запрос котировок (RFQ)",
+        "de": "Anfrage zur Angebotsabgabe (RFQ)",
+        "fr": "demande de prix (RFQ)",
+        "es": "solicitud de cotización (RFQ)",
+        "it": "richiesta di quotazione (RFQ)",
+        "pt": "pedido de cotação (RFQ)",
+        "pl": "zapytanie ofertowe (RFQ)",
+        "nl": "offerteaanvraag (RFQ)",
+        "ro": "cerere de cotație (RFQ)",
+        "cs": "poptávka cenové nabídky (RFQ)"
+      },
+      "note": "Request for pricing, distinct from a request for a technical/commercial proposal. Keep RFQ if spoken."
+    },
+    {
+      "id": "rfp",
+      "terms": {
+        "en": "request for proposal (RFP)",
+        "ru": "запрос предложений (RFP)",
+        "de": "Aufforderung zur Einreichung eines Lösungsvorschlags (RFP)",
+        "fr": "demande de proposition (RFP)",
+        "es": "solicitud de propuestas (RFP)",
+        "it": "richiesta di proposta (RFP)",
+        "pt": "pedido de propostas (RFP)",
+        "pl": "zapytanie o propozycję (RFP)",
+        "nl": "verzoek om een voorstel (RFP)",
+        "ro": "cerere de propuneri (RFP)",
+        "cs": "žádost o návrh (RFP)"
+      },
+      "note": "Request for a solution/proposal, distinct from a price-only quotation request. Keep RFP if spoken."
+    },
+    {
+      "id": "quotation",
+      "terms": {
+        "en": "price quotation",
+        "ru": "коммерческое предложение",
+        "de": "Preisangebot",
+        "fr": "offre de prix",
+        "es": "oferta económica",
+        "it": "offerta economica",
+        "pt": "proposta de preço",
+        "pl": "oferta cenowa",
+        "nl": "prijsopgave",
+        "ro": "ofertă de preț",
+        "cs": "cenová nabídka"
+      }
+    },
+    {
+      "id": "framework-agreement",
+      "terms": {
+        "en": "framework agreement",
+        "ru": "рамочное соглашение",
+        "de": "Rahmenvereinbarung",
+        "fr": "accord-cadre",
+        "es": "acuerdo marco",
+        "it": "accordo quadro",
+        "pt": "acordo-quadro",
+        "pl": "umowa ramowa",
+        "nl": "raamovereenkomst",
+        "ro": "acord-cadru",
+        "cs": "rámcová dohoda"
+      }
+    },
+    {
+      "id": "contracting-authority",
+      "terms": {
+        "en": "contracting authority (public procurement)",
+        "ru": "заказчик (государственные закупки)",
+        "de": "öffentlicher Auftraggeber",
+        "fr": "pouvoir adjudicateur",
+        "es": "poder adjudicador",
+        "it": "amministrazione aggiudicatrice",
+        "pt": "entidade adjudicante",
+        "pl": "instytucja zamawiająca",
+        "nl": "aanbestedende dienst",
+        "ro": "autoritate contractantă",
+        "cs": "veřejný zadavatel"
+      },
+      "note": "Use this public-procurement sense only when that context is explicit; an ordinary buyer need not be a public authority."
+    },
+    {
+      "id": "moq",
+      "terms": {
+        "en": "minimum order quantity (MOQ)",
+        "ru": "минимальный объём заказа (MOQ)",
+        "de": "Mindestbestellmenge (MOQ)",
+        "fr": "quantité minimale de commande (MOQ)",
+        "es": "cantidad mínima de pedido (MOQ)",
+        "it": "quantità minima d'ordine (MOQ)",
+        "pt": "quantidade mínima de encomenda (MOQ)",
+        "pl": "minimalna wielkość zamówienia (MOQ)",
+        "nl": "minimale bestelhoeveelheid (MOQ)",
+        "ro": "cantitate minimă de comandă (MOQ)",
+        "cs": "minimální objednací množství (MOQ)"
+      }
+    },
+    {
+      "id": "lead-time",
+      "terms": {
+        "en": "delivery lead time",
+        "ru": "срок поставки",
+        "de": "Lieferzeit",
+        "fr": "délai de livraison",
+        "es": "plazo de entrega",
+        "it": "tempo di consegna",
+        "pt": "prazo de entrega",
+        "pl": "czas realizacji dostawy",
+        "nl": "levertijd",
+        "ro": "termen de livrare",
+        "cs": "dodací lhůta"
+      },
+      "note": "Elapsed duration until supply, not a calendar delivery date. Preserve the stated starting event, working/calendar days and uncertainty."
+    },
+    {
+      "id": "delivery-date",
+      "terms": {
+        "en": "delivery date",
+        "ru": "дата поставки",
+        "de": "Lieferdatum",
+        "fr": "date de livraison",
+        "es": "fecha de entrega",
+        "it": "data di consegna",
+        "pt": "data de entrega",
+        "pl": "data dostawy",
+        "nl": "leverdatum",
+        "ro": "data livrării",
+        "cs": "datum dodání"
+      },
+      "note": "Calendar date; do not replace by lead time or invent a date from a duration."
+    },
+    {
+      "id": "unit-price",
+      "terms": {
+        "en": "unit price",
+        "ru": "цена за единицу",
+        "de": "Stückpreis",
+        "fr": "prix unitaire",
+        "es": "precio unitario",
+        "it": "prezzo unitario",
+        "pt": "preço unitário",
+        "pl": "cena jednostkowa",
+        "nl": "eenheidsprijs",
+        "ro": "preț unitar",
+        "cs": "jednotková cena"
+      }
+    },
+    {
+      "id": "payment-terms",
+      "terms": {
+        "en": "payment terms",
+        "ru": "условия оплаты",
+        "de": "Zahlungsbedingungen",
+        "fr": "conditions de paiement",
+        "es": "condiciones de pago",
+        "it": "condizioni di pagamento",
+        "pt": "condições de pagamento",
+        "pl": "warunki płatności",
+        "nl": "betalingsvoorwaarden",
+        "ro": "condiții de plată",
+        "cs": "platební podmínky"
+      }
+    },
+    {
+      "id": "advance-payment",
+      "terms": {
+        "en": "advance payment",
+        "ru": "авансовый платёж",
+        "de": "Anzahlung / Vorauszahlung",
+        "fr": "acompte / paiement anticipé",
+        "es": "pago anticipado",
+        "it": "acconto / pagamento anticipato",
+        "pt": "pagamento antecipado",
+        "pl": "przedpłata",
+        "nl": "vooruitbetaling",
+        "ro": "plată în avans",
+        "cs": "platba předem"
+      },
+      "note": "Preserve that it is an advance or part payment, not just an unspecified amount. Do not turn a deposit into retention or invent refundability."
+    },
+    {
+      "id": "letter-of-credit",
+      "terms": {
+        "en": "documentary letter of credit",
+        "ru": "документарный аккредитив",
+        "de": "Dokumentenakkreditiv",
+        "fr": "crédit documentaire",
+        "es": "crédito documentario",
+        "it": "credito documentario / lettera di credito",
+        "pt": "crédito documentário",
+        "pl": "akredytywa dokumentowa",
+        "nl": "documentair krediet",
+        "ro": "acreditiv documentar",
+        "cs": "dokumentární akreditiv"
+      },
+      "note": "Documentary payment instrument; not a credit card, loan or bank guarantee. A bare LC stays LC unless its meaning is explicit."
+    },
+    {
+      "id": "bank-guarantee",
+      "terms": {
+        "en": "bank guarantee",
+        "ru": "банковская гарантия",
+        "de": "Bankgarantie",
+        "fr": "garantie bancaire",
+        "es": "garantía bancaria",
+        "it": "garanzia bancaria",
+        "pt": "garantia bancária",
+        "pl": "gwarancja bankowa",
+        "nl": "bankgarantie",
+        "ro": "garanție bancară",
+        "cs": "bankovní záruka"
+      },
+      "note": "Bank undertaking; distinct from a documentary letter of credit and a product warranty."
+    },
+    {
+      "id": "performance-security",
+      "terms": {
+        "en": "performance security",
+        "ru": "обеспечение исполнения договора",
+        "de": "Vertragserfüllungssicherheit",
+        "fr": "garantie de bonne exécution",
+        "es": "garantía de cumplimiento",
+        "it": "garanzia di buona esecuzione",
+        "pt": "garantia de boa execução",
+        "pl": "zabezpieczenie należytego wykonania umowy",
+        "nl": "zekerheid voor de nakoming",
+        "ro": "garanție de bună execuție",
+        "cs": "zajištění řádného plnění smlouvy"
+      },
+      "note": "Security for contract performance; do not assume a bank guarantee, bond or cash form unless stated."
+    },
+    {
+      "id": "retention",
+      "terms": {
+        "en": "retention money",
+        "ru": "гарантийное удержание",
+        "de": "Sicherheitseinbehalt",
+        "fr": "retenue de garantie",
+        "es": "retención de garantía",
+        "it": "ritenuta a garanzia",
+        "pt": "retenção de garantia",
+        "pl": "kaucja gwarancyjna zatrzymana z wynagrodzenia",
+        "nl": "ingehouden garantiebedrag",
+        "ro": "sumă reținută drept garanție",
+        "cs": "zádržné"
+      },
+      "note": "Money withheld from payment as security, not a discount or advance."
+    },
+    {
+      "id": "invoice",
+      "terms": {
+        "en": "invoice",
+        "ru": "счёт на оплату",
+        "de": "Rechnung",
+        "fr": "facture",
+        "es": "factura",
+        "it": "fattura",
+        "pt": "fatura",
+        "pl": "faktura",
+        "nl": "factuur",
+        "ro": "factură",
+        "cs": "faktura"
+      },
+      "note": "Payment invoice; do not invent VAT/tax-invoice status when it is not stated."
+    },
+    {
+      "id": "bill-of-lading",
+      "terms": {
+        "en": "bill of lading",
+        "ru": "коносамент",
+        "de": "Konnossement",
+        "fr": "connaissement",
+        "es": "conocimiento de embarque",
+        "it": "polizza di carico",
+        "pt": "conhecimento de embarque",
+        "pl": "konosament",
+        "nl": "cognossement",
+        "ro": "conosament",
+        "cs": "konosament"
+      }
+    },
+    {
+      "id": "delivery-note",
+      "terms": {
+        "en": "delivery note",
+        "ru": "товаросопроводительная накладная",
+        "de": "Lieferschein",
+        "fr": "bon de livraison",
+        "es": "albarán de entrega",
+        "it": "documento di trasporto",
+        "pt": "guia de remessa",
+        "pl": "dokument dostawy",
+        "nl": "pakbon",
+        "ro": "aviz de însoțire a mărfii",
+        "cs": "dodací list"
+      }
+    },
+    {
+      "id": "specification",
+      "terms": {
+        "en": "technical specification",
+        "ru": "техническая спецификация",
+        "de": "technische Spezifikation",
+        "fr": "spécification technique",
+        "es": "especificación técnica",
+        "it": "specifica tecnica",
+        "pt": "especificação técnica",
+        "pl": "specyfikacja techniczna",
+        "nl": "technische specificatie",
+        "ro": "specificație tehnică",
+        "cs": "technická specifikace"
+      }
+    },
+    {
+      "id": "acceptance",
+      "terms": {
+        "en": "acceptance of goods",
+        "ru": "приёмка товара",
+        "de": "Warenabnahme",
+        "fr": "réception des marchandises",
+        "es": "recepción de mercancías",
+        "it": "accettazione della merce",
+        "pt": "aceitação da mercadoria",
+        "pl": "odbiór towaru",
+        "nl": "acceptatie van goederen",
+        "ro": "recepția mărfurilor",
+        "cs": "přejímka zboží"
+      }
+    },
+    {
+      "id": "nonconformity",
+      "terms": {
+        "en": "non-conformity",
+        "ru": "несоответствие требованиям",
+        "de": "Nichtkonformität",
+        "fr": "non-conformité",
+        "es": "no conformidad",
+        "it": "non conformità",
+        "pt": "não conformidade",
+        "pl": "niezgodność",
+        "nl": "non-conformiteit",
+        "ro": "neconformitate",
+        "cs": "neshoda"
+      },
+      "note": "Failure of goods or services to meet requirements, NOT a complaint or claim. Refusing non-conforming goods must not become refusing non-conformity claims."
+    },
+    {
+      "id": "warranty",
+      "terms": {
+        "en": "contractual warranty",
+        "ru": "договорная гарантия качества",
+        "de": "vertragliche Garantie",
+        "fr": "garantie contractuelle",
+        "es": "garantía contractual",
+        "it": "garanzia contrattuale",
+        "pt": "garantia contratual",
+        "pl": "gwarancja umowna",
+        "nl": "contractuele garantie",
+        "ro": "garanție contractuală",
+        "cs": "smluvní záruka"
+      },
+      "note": "Preserve the stated warranty and scope; do not substitute statutory liability rules or invent a warranty period."
+    },
+    {
+      "id": "late-delivery-penalty",
+      "terms": {
+        "en": "late delivery penalty",
+        "ru": "неустойка за просрочку поставки",
+        "de": "Vertragsstrafe wegen Lieferverzugs",
+        "fr": "pénalité de retard de livraison",
+        "es": "penalización por retraso en la entrega",
+        "it": "penale per ritardo nella consegna",
+        "pt": "penalização por atraso na entrega",
+        "pl": "kara umowna za opóźnienie dostawy",
+        "nl": "boete wegens te late levering",
+        "ro": "penalitate pentru întârzierea livrării",
+        "cs": "smluvní pokuta za prodlení s dodáním"
+      },
+      "note": "Preserve penalty/compensation distinction and conditions in the utterance; do not recast liquidated damages as a punitive penalty."
+    },
+    {
+      "id": "tco",
+      "terms": {
+        "en": "total cost of ownership (TCO)",
+        "ru": "совокупная стоимость владения (TCO)",
+        "de": "Gesamtbetriebskosten (TCO)",
+        "fr": "coût total de possession (TCO)",
+        "es": "coste total de propiedad (TCO)",
+        "it": "costo totale di proprietà (TCO)",
+        "pt": "custo total de propriedade (TCO)",
+        "pl": "całkowity koszt posiadania (TCO)",
+        "nl": "totale eigendomskosten (TCO)",
+        "ro": "cost total de proprietate (TCO)",
+        "cs": "celkové náklady na vlastnictví (TCO)"
+      }
+    },
+    {
+      "id": "sla",
+      "terms": {
+        "en": "service level agreement (SLA)",
+        "ru": "соглашение об уровне обслуживания (SLA)",
+        "de": "Service-Level-Vereinbarung (SLA)",
+        "fr": "accord de niveau de service (SLA)",
+        "es": "acuerdo de nivel de servicio (SLA)",
+        "it": "accordo sul livello di servizio (SLA)",
+        "pt": "acordo de nível de serviço (SLA)",
+        "pl": "umowa o poziomie świadczenia usług (SLA)",
+        "nl": "service level agreement (SLA)",
+        "ro": "acord privind nivelul serviciilor (SLA)",
+        "cs": "dohoda o úrovni služeb (SLA)"
+      }
+    },
+    {
+      "id": "safety-stock",
+      "terms": {
+        "en": "safety stock",
+        "ru": "страховой запас",
+        "de": "Sicherheitsbestand",
+        "fr": "stock de sécurité",
+        "es": "stock de seguridad",
+        "it": "scorta di sicurezza",
+        "pt": "stock de segurança",
+        "pl": "zapas bezpieczeństwa",
+        "nl": "veiligheidsvoorraad",
+        "ro": "stoc de siguranță",
+        "cs": "pojistná zásoba"
+      }
+    },
+    {
+      "id": "supplier-qualification",
+      "terms": {
+        "en": "supplier qualification",
+        "ru": "квалификация поставщика",
+        "de": "Lieferantenqualifizierung",
+        "fr": "qualification des fournisseurs",
+        "es": "calificación de proveedores",
+        "it": "qualifica dei fornitori",
+        "pt": "qualificação de fornecedores",
+        "pl": "kwalifikacja dostawców",
+        "nl": "leverancierskwalificatie",
+        "ro": "calificarea furnizorilor",
+        "cs": "kvalifikace dodavatelů"
+      }
+    },
+    {
+      "id": "subcontractor",
+      "terms": {
+        "en": "subcontractor",
+        "ru": "субподрядчик",
+        "de": "Unterauftragnehmer",
+        "fr": "sous-traitant",
+        "es": "subcontratista",
+        "it": "subappaltatore",
+        "pt": "subcontratante",
+        "pl": "podwykonawca",
+        "nl": "onderaannemer",
+        "ro": "subcontractant",
+        "cs": "subdodavatel"
+      }
+    },
+    {
+      "id": "vat",
+      "terms": {
+        "en": "value added tax (VAT)",
+        "ru": "налог на добавленную стоимость (НДС)",
+        "de": "Mehrwertsteuer (MwSt.)",
+        "fr": "taxe sur la valeur ajoutée (TVA)",
+        "es": "impuesto sobre el valor añadido (IVA)",
+        "it": "imposta sul valore aggiunto (IVA)",
+        "pt": "imposto sobre o valor acrescentado (IVA)",
+        "pl": "podatek od towarów i usług (VAT)",
+        "nl": "belasting over de toegevoegde waarde (btw)",
+        "ro": "taxa pe valoarea adăugată (TVA)",
+        "cs": "daň z přidané hodnoty (DPH)"
+      },
+      "note": "Preserve whether VAT is included/excluded; do not add a tax rate."
+    },
+    {
+      "id": "partial-delivery",
+      "terms": {
+        "en": "partial delivery",
+        "ru": "частичная поставка",
+        "de": "Teillieferung",
+        "fr": "livraison partielle",
+        "es": "entrega parcial",
+        "it": "consegna parziale",
+        "pt": "entrega parcial",
+        "pl": "dostawa częściowa",
+        "nl": "deellevering",
+        "ro": "livrare parțială",
+        "cs": "částečná dodávka"
+      }
+    }
+  ]
+}

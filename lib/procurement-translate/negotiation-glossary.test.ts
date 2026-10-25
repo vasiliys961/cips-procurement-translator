@@ -1,15 +1,23 @@
 import { expect, it } from 'vitest'
 import { dialogueRealtimeSession } from '../dialogue-realtime-session'
+import { LIVE_DIALOGUE_LANGUAGES } from '../live-languages'
 import { NEGOTIATION_GLOSSARY, PROCUREMENT_LANGUAGES, procurementPairGlossary } from './negotiation-glossary'
 
-it('covers 35 commercial concepts in all eleven initial languages', () => {
-  expect(NEGOTIATION_GLOSSARY).toHaveLength(35)
-  expect(PROCUREMENT_LANGUAGES).toEqual(['en', 'ru', 'de', 'fr', 'es', 'it', 'pt', 'pl', 'nl', 'ro', 'cs'])
-  expect(new Set(NEGOTIATION_GLOSSARY.map(entry => entry.id)).size).toBe(35)
+it('covers commercial concepts in Russian and every EU dialogue language', () => {
+  expect(NEGOTIATION_GLOSSARY).toHaveLength(49)
+  expect(PROCUREMENT_LANGUAGES).toEqual(['en', 'ru', 'de', 'fr', 'es', 'it', 'pt', 'pl', 'nl', 'ro', 'cs', 'bg', 'hr', 'da', 'el', 'et', 'fi', 'hu', 'ga', 'lv', 'lt', 'mt', 'sk', 'sl', 'sv'])
+  expect(new Set(NEGOTIATION_GLOSSARY.map(entry => entry.id)).size).toBe(49)
   for (const entry of NEGOTIATION_GLOSSARY) {
     expect(Object.keys(entry.terms)).toEqual(PROCUREMENT_LANGUAGES)
     expect(Object.values(entry.terms).every(term => term.trim().length > 2)).toBe(true)
   }
+  for (const language of LIVE_DIALOGUE_LANGUAGES) {
+    if (language.eu || language.code === 'ru') expect(PROCUREMENT_LANGUAGES).toContain(language.code)
+  }
+  const cips = NEGOTIATION_GLOSSARY.find(entry => entry.id === 'cips')
+  expect(cips?.terms.ru).toBe('CIPS')
+  expect(cips?.terms.en).toBe('CIPS')
+  expect(cips?.note).toContain('сипс')
 })
 
 it('attaches only the two selected language columns in both directions', () => {
@@ -31,10 +39,14 @@ it('attaches only the two selected language columns in both directions', () => {
 })
 
 it('handles partial and absent coverage without restricting other language pairs', () => {
-  expect(procurementPairGlossary('sv', 'fi')).toBe('')
-  expect(procurementPairGlossary('sv', 'de')).toContain('de=Dokumentenakkreditiv')
-  expect(procurementPairGlossary('sv', 'de')).not.toContain('en=')
+  expect(procurementPairGlossary('ja', 'ko')).toBe('')
+  expect(procurementPairGlossary('ja', 'de')).toContain('de=Dokumentenakkreditiv')
+  expect(procurementPairGlossary('ja', 'de')).not.toContain('en=')
+  expect(procurementPairGlossary('sv', 'fi')).toContain('sv=remburs')
+  expect(procurementPairGlossary('sv', 'fi')).toContain('fi=remburssi')
+  expect(procurementPairGlossary('ru', 'en')).toContain('Spoken сипс is exactly CIPS')
   expect(dialogueRealtimeSession('sv', 'fi').instructions).toContain('procurement conversation')
+  expect(dialogueRealtimeSession('ru', 'en').audio.input.transcription.prompt).toBe('сипс CIPS')
 })
 
 it('distinguishes ambiguous commercial concepts without inventing contract details', () => {

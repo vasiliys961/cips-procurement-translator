@@ -59,7 +59,7 @@
         "response_failed": "Перевод не удался. Начните снова.",
         "generic": "Не удалось продолжить диалог. Проверьте ваше соединение и попробуйте снова."
       },
-      "procurementGlossaryLegend": "◆ — закупочный глоссарий (11 языков)."
+      "procurementGlossaryLegend": "◆ — закупочный глоссарий ({count} языков)."
     }
   },
   "en": {
@@ -122,7 +122,7 @@
         "response_failed": "Translation failed. Start again.",
         "generic": "Could not continue the dialogue. Check your connection and try again."
       },
-      "procurementGlossaryLegend": "◆ — procurement glossary (11 languages)."
+      "procurementGlossaryLegend": "◆ — procurement glossary ({count} languages)."
     }
   },
   "es": {
@@ -185,7 +185,7 @@
         "response_failed": "La traducción falló. Comienza de nuevo.",
         "generic": "No se pudo continuar el diálogo. Verifica tu conexión e inténtalo de nuevo."
       },
-      "procurementGlossaryLegend": "◆ — glosario de compras (11 idiomas)."
+      "procurementGlossaryLegend": "◆ — glosario de compras ({count} idiomas)."
     }
   },
   "fr": {
@@ -248,7 +248,7 @@
         "response_failed": "La traduction a échoué. Recommencez.",
         "generic": "Impossible de continuer le dialogue. Vérifiez votre connexion et réessayez."
       },
-      "procurementGlossaryLegend": "◆ — glossaire des achats (11 langues)."
+      "procurementGlossaryLegend": "◆ — glossaire des achats ({count} langues)."
     }
   },
   "ar": {
@@ -311,7 +311,7 @@
         "response_failed": "فشلت الترجمة. ابدأ مرة أخرى.",
         "generic": "تعذر متابعة الحوار. تحقق من اتصالك وحاول مرة أخرى."
       },
-      "procurementGlossaryLegend": "◆ — مسرد المشتريات (11 لغة)."
+      "procurementGlossaryLegend": "◆ — مسرد المشتريات ({count} لغة)."
     }
   },
   "hi": {
@@ -374,7 +374,7 @@
         "response_failed": "अनुवाद विफल। फिर से शुरू करें।",
         "generic": "संवाद जारी नहीं रखा जा सका। अपने कनेक्शन की जांच करें और फिर से प्रयास करें।"
       },
-      "procurementGlossaryLegend": "◆ — खरीद शब्दावली (11 भाषाएँ)।"
+      "procurementGlossaryLegend": "◆ — खरीद शब्दावली ({count} भाषाएँ)।"
     }
   },
   "pt-BR": {
@@ -437,7 +437,7 @@
         "response_failed": "A tradução falhou. Comece novamente.",
         "generic": "Não foi possível continuar o diálogo. Verifique sua conexão e tente novamente."
       },
-      "procurementGlossaryLegend": "◆ — glossário de compras (11 idiomas)."
+      "procurementGlossaryLegend": "◆ — glossário de compras ({count} idiomas)."
     }
   },
   "id": {
@@ -500,7 +500,7 @@
         "response_failed": "Penerjemahan gagal. Mulai lagi.",
         "generic": "Tidak dapat melanjutkan dialog. Periksa koneksi Anda dan coba lagi."
       },
-      "procurementGlossaryLegend": "◆ — glosarium pengadaan (11 bahasa)."
+      "procurementGlossaryLegend": "◆ — glosarium pengadaan ({count} bahasa)."
     }
   },
   "ms": {
@@ -563,7 +563,7 @@
         "response_failed": "Penterjemahan gagal. Mulakan semula.",
         "generic": "Tidak dapat meneruskan dialog. Semak sambungan anda dan cuba lagi."
       },
-      "procurementGlossaryLegend": "◆ — glosari perolehan (11 bahasa)."
+      "procurementGlossaryLegend": "◆ — glosari perolehan ({count} bahasa)."
     }
   },
   "tr": {
@@ -626,7 +626,7 @@
         "response_failed": "Çeviri başarısız oldu. Yeniden başlayın.",
         "generic": "Diyaloğa devam edilemedi. Bağlantınızı kontrol edin ve tekrar deneyin."
       },
-      "procurementGlossaryLegend": "◆ — satın alma sözlüğü (11 dil)."
+      "procurementGlossaryLegend": "◆ — satın alma sözlüğü ({count} dil)."
     }
   },
   "zh-CN": {
@@ -689,7 +689,7 @@
         "response_failed": "翻译失败。请重新开始。",
         "generic": "无法继续对话。请检查您的连接并重试。"
       },
-      "procurementGlossaryLegend": "◆ — 采购术语表（11 种语言）。"
+      "procurementGlossaryLegend": "◆ — 采购术语表（{count} 种语言）。"
     }
   },
   "bg": {
@@ -752,7 +752,7 @@
         "response_failed": "Преводът не успя. Започнете отново.",
         "generic": "Не можа да продължи диалога. Проверете връзката си и опитайте отново."
       },
-      "procurementGlossaryLegend": "◆ — речник за покупки (11 езика)."
+      "procurementGlossaryLegend": "◆ — речник за покупки ({count} езика)."
     }
   },
   "hr": {
@@ -815,7 +815,7 @@
         "response_failed": "Prevođenje nije uspjelo. Započnite ponovo.",
         "generic": "Nije moguće nastaviti dijalog. Provjerite svoju vezu i pokušajte ponovo."
       },
-      "procurementGlossaryLegend": "◆ — pojmovnik nabave (11 jezika)."
+      "procurementGlossaryLegend": "◆ — pojmovnik nabave ({count} jezika)."
     }
   },
   "cs": {
@@ -878,7 +878,7 @@
         "response_failed": "Překlad se nezdařil. Začněte znovu.",
         "generic": "Nepodařilo se pokračovat v dialogu. Zkontrolujte své připojení a zkuste to znovu."
       },
-      "procurementGlossaryLegend": "◆ — nákupní slovník (11 jazyků)."
+      "procurementGlossaryLegend": "◆ — nákupní slovník ({count} jazyků)."
     }
   },
   "da": {
@@ -941,7 +941,7 @@
         "response_failed": "Oversættelse mislykkedes. Start igen.",
         "generic": "Kunne ikke fortsætte dialogen. Tjek din forbindelse og prøv igen."
       },
-      "procurementGlossaryLegend": "◆ — indkøbsordliste (11 sprog)."
+      "procurementGlossaryLegend": "◆ — indkøbsordliste ({count} sprog)."
     }
   },
   "nl": {
@@ -1004,7 +1004,7 @@
         "response_failed": "Vertaling mislukt. Begin opnieuw.",
         "generic": "Kon de dialoog niet voortzetten. Controleer uw verbinding en probeer het opnieuw."
       },
-      "procurementGlossaryLegend": "◆ — inkoopwoordenlijst (11 talen)."
+      "procurementGlossaryLegend": "◆ — inkoopwoordenlijst ({count} talen)."
     }
   },
   "et": {
@@ -1067,7 +1067,7 @@
         "response_failed": "Tõlge ebaõnnestus. Alustage uuesti.",
         "generic": "Dialooge ei saanud jätkata. Kontrollige oma ühendust ja proovige uuesti."
       },
-      "procurementGlossaryLegend": "◆ — ostuterminoloogia sõnastik (11 keelt)."
+      "procurementGlossaryLegend": "◆ — ostuterminoloogia sõnastik ({count} keelt)."
     }
   },
   "fi": {
@@ -1130,7 +1130,7 @@
         "response_failed": "Käännös epäonnistui. Aloita uudelleen.",
         "generic": "Keskustelua ei voitu jatkaa. Tarkista yhteytesi ja yritä uudelleen."
       },
-      "procurementGlossaryLegend": "◆ — hankintasanasto (11 kieltä)."
+      "procurementGlossaryLegend": "◆ — hankintasanasto ({count} kieltä)."
     }
   },
   "de": {
@@ -1193,7 +1193,7 @@
         "response_failed": "Übersetzung fehlgeschlagen. Starten Sie erneut.",
         "generic": "Konnte den Dialog nicht fortsetzen. Überprüfen Sie Ihre Verbindung und versuchen Sie es erneut."
       },
-      "procurementGlossaryLegend": "◆ — Beschaffungsglossar (11 Sprachen)."
+      "procurementGlossaryLegend": "◆ — Beschaffungsglossar ({count} Sprachen)."
     }
   },
   "el": {
@@ -1256,7 +1256,7 @@
         "response_failed": "Η μετάφραση απέτυχε. Ξεκινήστε ξανά.",
         "generic": "Δεν ήταν δυνατή η συνέχιση του διαλόγου. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά."
       },
-      "procurementGlossaryLegend": "◆ — γλωσσάρι προμηθειών (11 γλώσσες)."
+      "procurementGlossaryLegend": "◆ — γλωσσάρι προμηθειών ({count} γλώσσες)."
     }
   },
   "hu": {
@@ -1319,7 +1319,7 @@
         "response_failed": "A fordítás nem sikerült. Kezdje újra.",
         "generic": "Nem lehetett folytatni a párbeszédet. Ellenőrizze a kapcsolatát és próbálja újra."
       },
-      "procurementGlossaryLegend": "◆ — beszerzési szójegyzék (11 nyelv)."
+      "procurementGlossaryLegend": "◆ — beszerzési szójegyzék ({count} nyelv)."
     }
   },
   "ga": {
@@ -1382,7 +1382,7 @@
         "response_failed": "Níor éirigh le haistriúchán. Tosaigh arís.",
         "generic": "Níor éirigh le leanúint ar aghaidh leis an dialóg. Seiceáil do nasc agus déan iarracht arís."
       },
-      "procurementGlossaryLegend": "◆ — gluais soláthair (11 teanga)."
+      "procurementGlossaryLegend": "◆ — gluais soláthair ({count} teanga)."
     }
   },
   "it": {
@@ -1445,7 +1445,7 @@
         "response_failed": "Traduzione fallita. Riprova.",
         "generic": "Impossibile continuare il dialogo. Controlla la tua connessione e riprova."
       },
-      "procurementGlossaryLegend": "◆ — glossario degli acquisti (11 lingue)."
+      "procurementGlossaryLegend": "◆ — glossario degli acquisti ({count} lingue)."
     }
   },
   "lv": {
@@ -1508,7 +1508,7 @@
         "response_failed": "Tulkošana neizdevās. Sāciet vēlreiz.",
         "generic": "Neizdevās turpināt dialogu. Pārbaudiet savu savienojumu un mēģiniet vēlreiz."
       },
-      "procurementGlossaryLegend": "◆ — iepirkumu glosārijs (11 valodas)."
+      "procurementGlossaryLegend": "◆ — iepirkumu glosārijs ({count} valodas)."
     }
   },
   "lt": {
@@ -1571,7 +1571,7 @@
         "response_failed": "Vertimas nepavyko. Pradėkite iš naujo.",
         "generic": "Nepavyko tęsti dialogo. Patikrinkite savo ryšį ir bandykite dar kartą."
       },
-      "procurementGlossaryLegend": "◆ — pirkimų žodynėlis (11 kalbų)."
+      "procurementGlossaryLegend": "◆ — pirkimų žodynėlis ({count} kalbų)."
     }
   },
   "mt": {
@@ -1634,7 +1634,7 @@
         "response_failed": "It-traduzzjoni falliet. Ibda mill-ġdid.",
         "generic": "Ma setax ikompli d-djalogu. Iċċekkja l-konnessjoni tiegħek u prova mill-ġdid."
       },
-      "procurementGlossaryLegend": "◆ — glossarju tal-akkwist (11-il lingwa)."
+      "procurementGlossaryLegend": "◆ — glossarju tal-akkwist ({count} lingwa)."
     }
   },
   "pl": {
@@ -1697,7 +1697,7 @@
         "response_failed": "Tłumaczenie nie powiodło się. Rozpocznij ponownie.",
         "generic": "Nie można kontynuować dialogu. Sprawdź swoje połączenie i spróbuj ponownie."
       },
-      "procurementGlossaryLegend": "◆ — słownik zakupowy (11 języków)."
+      "procurementGlossaryLegend": "◆ — słownik zakupowy ({count} języków)."
     }
   },
   "pt-PT": {
@@ -1760,7 +1760,7 @@
         "response_failed": "A tradução falhou. Comece novamente.",
         "generic": "Não foi possível continuar o diálogo. Verifique a sua ligação e tente novamente."
       },
-      "procurementGlossaryLegend": "◆ — glossário de compras (11 línguas)."
+      "procurementGlossaryLegend": "◆ — glossário de compras ({count} línguas)."
     }
   },
   "ro": {
@@ -1823,7 +1823,7 @@
         "response_failed": "Traducerea a eșuat. Începe din nou.",
         "generic": "Nu s-a putut continua dialogul. Verifică conexiunea și încearcă din nou."
       },
-      "procurementGlossaryLegend": "◆ — glosar de achiziții (11 limbi)."
+      "procurementGlossaryLegend": "◆ — glosar de achiziții ({count} limbi)."
     }
   },
   "sk": {
@@ -1886,7 +1886,7 @@
         "response_failed": "Preklad zlyhal. Začnite znova.",
         "generic": "Nepodarilo sa pokračovať v dialógu. Skontrolujte svoje pripojenie a skúste to znova."
       },
-      "procurementGlossaryLegend": "◆ — nákupný slovník (11 jazykov)."
+      "procurementGlossaryLegend": "◆ — nákupný slovník ({count} jazykov)."
     }
   },
   "sl": {
@@ -1949,7 +1949,7 @@
         "response_failed": "Prevajanje ni uspelo. Začnite znova.",
         "generic": "Pogovora ni bilo mogoče nadaljevati. Preverite svojo povezavo in poskusite znova."
       },
-      "procurementGlossaryLegend": "◆ — nabavni glosar (11 jezikov)."
+      "procurementGlossaryLegend": "◆ — nabavni glosar ({count} jezikov)."
     }
   },
   "sv": {
@@ -2012,7 +2012,7 @@
         "response_failed": "Översättning misslyckades. Starta om.",
         "generic": "Kunde inte fortsätta dialogen. Kontrollera din anslutning och försök igen."
       },
-      "procurementGlossaryLegend": "◆ — inköpsordlista (11 språk)."
+      "procurementGlossaryLegend": "◆ — inköpsordlista ({count} språk)."
     }
   }
 }

@@ -49,6 +49,7 @@ export async function POST(request: NextRequest) {
     const transcription = new FormData()
     transcription.append('file', audio, 'utterance.wav')
     transcription.append('model', 'whisper-1')
+    transcription.append('prompt', 'сипс CIPS')
     transcription.append('response_format', 'verbose_json')
     const heard = await (await call('audio/transcriptions', transcription)).json()
     const source = typeof heard.text === 'string' ? heard.text.trim() : ''

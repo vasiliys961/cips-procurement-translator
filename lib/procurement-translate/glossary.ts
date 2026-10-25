@@ -30,7 +30,7 @@ export const PROCUREMENT_GLOSSARY = {
     { id: 'documentary-collection', forms: ['инкассо', 'документарное инкассо', 'documentary collection', 'remise documentaire', '托收'] },
   ],
   terms: [
-    { id: 'cips', forms: ['cips', 'chartered institute of procurement', 'королевский институт закупок'] },
+    { id: 'cips', forms: ['cips', 'сипс', 'chartered institute of procurement', 'королевский институт закупок'] },
     { id: 'tco', forms: ['tco', 'total cost of ownership', 'совокупная стоимость владения', 'совокупную стоимость владения', 'совокупной стоимости владения', 'cout total de possession', 'costo total de propiedad'] },
     { id: 'category-management', forms: ['category management', 'категорийн', 'gestion par categories', 'gestion de categorias'] },
     { id: 'strategic-sourcing', forms: ['strategic sourcing', 'стратегический сорсинг', 'стратегическ сорсинг'] },
@@ -69,7 +69,7 @@ export const PROCUREMENT_GLOSSARY = {
     {
       id: 'cip',
       forms: ['cip'],
-      expansions: ['carriage and insurance paid', 'cips', 'continuous improvement', 'перевозка и страхование оплачены'],
+      expansions: ['carriage and insurance paid', 'cips', 'сипс', 'continuous improvement', 'перевозка и страхование оплачены'],
       ambiguous: true,
     },
     {

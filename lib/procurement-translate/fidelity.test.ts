@@ -238,6 +238,10 @@ describe('procurement fidelity phrases', () => {
     expect(codesOf('Нужно отгрузить товар.', 'Ship it CIF.')).toContain('incoterm')
     expect(codesOf('Считайте совокупную стоимость владения.', 'Look at the price.')).toContain('term')
     expectFaithful('Считайте совокупную стоимость владения.', 'Calculate total cost of ownership.')
+    expectFaithful('Конференция сипс.', 'The CIPS conference.')
+    expect(codesOf('Работаем по стандарту сипс.', 'We work to the CIP standard.')).toEqual(
+      expect.arrayContaining(['incoterm', 'term'])
+    )
     expect(codesOf('Работаем по стандарту CIPS.', 'We work to the CIP standard.')).toEqual(
       expect.arrayContaining(['incoterm', 'term'])
     )
